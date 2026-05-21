@@ -1,0 +1,31 @@
+\begin{tikzpicture}[
+  x=0.00018cm,
+  y=0.9cm,
+  font=\small
+]
+\def\barh{0.32}
+\node[anchor=east] at (0,3) {Train};
+\fill[blue!60] (0,2.84) rectangle (11836,3.16);
+\fill[red!55] (11836,2.84) rectangle (21854,3.16);
+\node[anchor=west] at (22000,3) {21,854};
+
+\node[anchor=east] at (0,2) {Validation};
+\fill[blue!60] (0,1.84) rectangle (1545,2.16);
+\fill[red!55] (1545,1.84) rectangle (2732,2.16);
+\node[anchor=west] at (3000,2) {2,732};
+
+\node[anchor=east] at (0,1) {Test};
+\fill[blue!60] (0,0.84) rectangle (1477,1.16);
+\fill[red!55] (1477,0.84) rectangle (2732,1.16);
+\node[anchor=west] at (3000,1) {2,732};
+
+\draw[black!40] (0,0.45) -- (21854,0.45);
+\foreach \x/\label in {0/0,5000/5k,10000/10k,15000/15k,20000/20k} {
+  \draw[black!40] (\x,0.38) -- (\x,0.52);
+  \node[anchor=north] at (\x,0.36) {\label};
+}
+\fill[blue!60] (0,-0.25) rectangle (800,-0.05);
+\node[anchor=west] at (1000,-0.15) {Secure};
+\fill[red!55] (5200,-0.25) rectangle (6000,-0.05);
+\node[anchor=west] at (6200,-0.15) {Vulnerable};
+\end{tikzpicture}

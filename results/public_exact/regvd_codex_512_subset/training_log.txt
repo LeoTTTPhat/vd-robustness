@@ -1,0 +1,65 @@
+05/18/2026 11:48:52 - WARNING - __main__ -   Process rank: -1, device: cpu, n_gpu: 0, distributed training: False, 16-bits training: False
+Some weights of RobertaForSequenceClassification were not initialized from the model checkpoint at ../../../models_public/graphcodebert_base_safetensors and are newly initialized: ['classifier.dense.bias', 'classifier.dense.weight', 'classifier.out_proj.bias', 'classifier.out_proj.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+05/18/2026 11:48:52 - INFO - __main__ -   Training/evaluation parameters Namespace(train_data_file='../dataset_codex_512_subset/train.jsonl', output_dir='../../../results/public_exact/regvd_codex_512_subset', eval_data_file='../dataset_codex_512_subset/valid.jsonl', test_data_file='../dataset_codex_512_subset/test.jsonl', model_type='roberta', model_name_or_path='../../../models_public/graphcodebert_base_safetensors', mlm=False, mlm_probability=0.15, config_name='', tokenizer_name='../../../models_public/graphcodebert_base_safetensors', cache_dir='', block_size=128, do_train=True, do_eval=True, do_test=True, evaluate_during_training=True, do_lower_case=False, train_batch_size=2, eval_batch_size=8, gradient_accumulation_steps=1, learning_rate=0.0005, weight_decay=0.0, adam_epsilon=1e-08, max_grad_norm=1.0, num_train_epochs=1.0, max_steps=-1, warmup_steps=0, logging_steps=50, save_steps=50, save_total_limit=None, eval_all_checkpoints=False, no_cuda=True, overwrite_output_dir=False, overwrite_cache=False, seed=123456, epoch=1, fp16=False, fp16_opt_level='O1', local_rank=-1, server_ip='', server_port='', model='GNNs', hidden_size=32, feature_dim_size=768, num_GNN_layers=1, num_classes=2, gnn='ReGCN', format='uni', window_size=3, remove_residual=False, att_op='mul', training_percent=1.0, alpha_weight=1.0, n_gpu=0, device=device(type='cpu'), per_gpu_train_batch_size=2, per_gpu_eval_batch_size=8, start_epoch=0, start_step=0)
+05/18/2026 11:48:53 - INFO - __main__ -   *** Total Sample ***
+05/18/2026 11:48:53 - INFO - __main__ -   	Total: 128	selected: 128	percent: 1.0	
+05/18/2026 11:48:53 - INFO - __main__ -   *** Sample ***
+05/18/2026 11:48:53 - INFO - __main__ -   Total sample
+05/18/2026 11:48:53 - INFO - __main__ -   idx: 0
+05/18/2026 11:48:53 - INFO - __main__ -   label: 0
+05/18/2026 11:48:53 - INFO - __main__ -   input_tokens: ['<s>', 'static', '_void', '_v', 'c', '1', '_', 'over', 'lap', '_', 'block', '(', 'M', 'peg', 'Enc', 'Context', '_*', 's', ',', '_D', 'CT', 'E', 'LE', 'M', '_block', '[', '64', '],', '_int', '_n', ',', '_int', '_do', '_', 'hor', ',', '_int', '_do', '_', 'vert', ')', '_{', '_int', '_i', ';', '_if', '(', 'do', '_', 'hor', ')', '_{', '_//', 'T', 'OD', 'O', '_}', '_if', '(', 'do', '_', 'vert', ')', '_{', '_//', 'T', 'OD', 'O', '_}', '_for', '(', 'i', '_=', '_0', ';', '_i', '_<', '_64', ';', '_i', '++)', '_block', '[', 'i', ']', '_+=', '_128', ';', '_}', '</s>']
+05/18/2026 11:48:53 - INFO - __main__ -   input_ids: 0 42653 13842 748 438 134 1215 2137 22489 1215 16776 1640 448 41191 45780 48522 1009 29 6 211 7164 717 3850 448 1803 10975 4027 7479 6979 295 6 6979 109 1215 13562 6 6979 109 1215 9942 43 25522 6979 939 131 114 1640 5016 1215 13562 43 25522 21277 565 7111 673 35524 114 1640 5016 1215 9942 43 25522 21277 565 7111 673 35524 13 1640 118 5457 321 131 939 28696 4430 131 939 49346 1803 10975 118 742 49371 13950 131 35524 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+05/18/2026 11:48:53 - INFO - __main__ -   *** Sample ***
+05/18/2026 11:48:53 - INFO - __main__ -   Total sample
+05/18/2026 11:48:53 - INFO - __main__ -   idx: 1
+05/18/2026 11:48:53 - INFO - __main__ -   label: 0
+05/18/2026 11:48:53 - INFO - __main__ -   input_tokens: ['<s>', 'static', '_void', '_build', '_', 'ud', 'p', '_', 'url', '(', 'char', '_*', 'buf', ',', '_int', '_buf', '_', 'size', ',', '_const', '_char', '_*', 'host', 'name', ',', '_int', '_port', ',', '_int', '_local', '_', 'port', ',', '_int', '_t', 'tl', ')', '_{', '_sn', 'printf', '(', 'buf', ',', '_buf', '_', 'size', ',', '_"', 'ud', 'p', '://', '%', 's', ':', '%', 'd', '",', '_host', 'name', ',', '_port', ');', '_if', '_(', 'local', '_', 'port', '_>=', '_0', ')', '_url', '_', 'add', '_', 'option', '(', 'buf', ',', '_buf', '_', 'size', ',', '_"', 'local', 'port', '=', '%', 'd', '",', '_local', '_', 'port', ');', '_if', '_(', 'tt', 'l', '_>=', '_0', ')', '_url', '_', 'add', '_', 'option', '(', 'buf', ',', '_buf', '_', 'size', ',', '_"', 'tt', 'l', '=', '%', 'd', '",', '_t', 'tl', ');', '_}', '</s>']
+05/18/2026 11:48:53 - INFO - __main__ -   input_ids: 0 42653 13842 1119 1215 1906 642 1215 6423 1640 24262 1009 48939 6 6979 49125 1215 10799 6 10759 16224 1009 11438 13650 6 6979 4103 6 6979 400 1215 3427 6 6979 326 34842 43 25522 4543 49775 1640 48939 6 49125 1215 10799 6 22 1906 642 640 207 29 35 207 417 1297 1482 13650 6 4103 4397 114 36 18076 1215 3427 49095 321 43 46471 1215 4917 1215 27657 1640 48939 6 49125 1215 10799 6 22 18076 3427 5214 207 417 1297 400 1215 3427 4397 114 36 5967 462 49095 321 43 46471 1215 4917 1215 27657 1640 48939 6 49125 1215 10799 6 22 5967 462 5214 207 417 1297 326 34842 4397 35524 2 1 1 1 1
+05/18/2026 11:48:53 - INFO - __main__ -   *** Sample ***
+05/18/2026 11:48:53 - INFO - __main__ -   Total sample
+05/18/2026 11:48:53 - INFO - __main__ -   idx: 2
+05/18/2026 11:48:53 - INFO - __main__ -   label: 0
+05/18/2026 11:48:53 - INFO - __main__ -   input_tokens: ['<s>', 'static', '_void', '_code', '_', 'gen', '_', 'alloc', '(', 'unsigned', '_long', '_t', 'b', '_', 'size', ')', '_{', '_#', 'if', 'def', '_USE', '_', 'STAT', 'IC', '_', 'C', 'ODE', '_', 'GEN', '_', 'BU', 'FFER', '_code', '_', 'gen', '_', 'buffer', '_=', '_static', '_', 'code', '_', 'gen', '_', 'buffer', ';', '_code', '_', 'gen', '_', 'buffer', '_', 'size', '_=', '_DE', 'FAULT', '_', 'C', 'ODE', '_', 'GEN', '_', 'BU', 'FFER', '_', 'SIZE', ';', '_map', '_', 'exec', '(', 'code', '_', 'gen', '_', 'buffer', ',', '_code', '_', 'gen', '_', 'buffer', '_', 'size', ');', '_#', 'else', '_code', '_', 'gen', '_', 'buffer', '_', 'size', '_=', '_t', 'b', '_', 'size', ';', '_if', '_(', 'code', '_', 'gen', '_', 'buffer', '_', 'size', '_==', '_0', ')', '_{', '_#', 'if', '_defined', '(', 'CON', 'FIG', '_', 'USER', '_', 'ON', 'LY', ')', '_/*', '_in', '</s>']
+05/18/2026 11:48:53 - INFO - __main__ -   input_ids: 0 42653 13842 3260 1215 4138 1215 48429 1640 49418 251 326 428 1215 10799 43 25522 849 1594 9232 33359 1215 40106 2371 1215 347 38023 1215 30965 1215 19159 45234 3260 1215 4138 1215 47438 5457 25156 1215 20414 1215 4138 1215 47438 131 3260 1215 4138 1215 47438 1215 10799 5457 5885 47697 1215 347 38023 1215 30965 1215 19159 45234 1215 49340 131 5456 1215 22342 1640 20414 1215 4138 1215 47438 6 3260 1215 4138 1215 47438 1215 10799 4397 849 44617 3260 1215 4138 1215 47438 1215 10799 5457 326 428 1215 10799 131 114 36 20414 1215 4138 1215 47438 1215 10799 45994 321 43 25522 849 1594 6533 1640 15299 46741 1215 47955 1215 2191 14079 43 48565 11 2
+05/18/2026 11:48:53 - INFO - __main__ -   ***** Running training *****
+05/18/2026 11:48:53 - INFO - __main__ -     Num examples = 128
+05/18/2026 11:48:53 - INFO - __main__ -     Num Epochs = 1
+05/18/2026 11:48:53 - INFO - __main__ -     Instantaneous batch size per GPU = 2
+05/18/2026 11:48:53 - INFO - __main__ -     Total train batch size (w. parallel, distributed & accumulation) = 2
+05/18/2026 11:48:53 - INFO - __main__ -     Gradient Accumulation steps = 1
+05/18/2026 11:48:53 - INFO - __main__ -     Total optimization steps = 64
+using default unweighted graph
+05/18/2026 11:49:03 - INFO - __main__ -   ***** Running evaluation *****
+05/18/2026 11:49:03 - INFO - __main__ -     Num examples = 64
+05/18/2026 11:49:03 - INFO - __main__ -     Batch size = 8
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+05/18/2026 11:49:31 - INFO - __main__ -     eval_loss = 0.6943
+05/18/2026 11:49:31 - INFO - __main__ -     eval_acc = 0.5
+05/18/2026 11:49:31 - INFO - __main__ -     ********************
+05/18/2026 11:49:31 - INFO - __main__ -     Best acc:0.5
+05/18/2026 11:49:31 - INFO - __main__ -     ********************
+05/18/2026 11:49:36 - INFO - __main__ -   Saving model checkpoint to ../../../results/public_exact/regvd_codex_512_subset/checkpoint-best-acc/model.bin
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+05/18/2026 11:49:56 - INFO - __main__ -   epoch 0 loss 0.6955
+05/18/2026 11:50:00 - INFO - __main__ -   ***** Running evaluation *****
+05/18/2026 11:50:00 - INFO - __main__ -     Num examples = 64
+05/18/2026 11:50:00 - INFO - __main__ -     Batch size = 8
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+using default unweighted graph
+05/18/2026 11:50:28 - INFO - __main__ -   ***** Eval results *****
+05/18/2026 11:50:28 - INFO - __main__ -     eval_acc = 0.5
+05/18/2026 11:50:28 - INFO - __main__ -     eval_loss = 0.6943
+05/18/2026 11:50:37 - INFO - __main__ -   ***** Running Test *****
+05/18/2026 11:50:37 - INFO - __main__ -     Num examples = 4608
+05/18/2026 11:50:37 - INFO - __main__ -     Batch size = 8
+05/18/2026 11:51:29 - INFO - __main__ -   ***** Test results *****
+05/18/2026 11:51:29 - INFO - __main__ -     test_acc = 0.5

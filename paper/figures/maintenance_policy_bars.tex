@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+\begin{axis}[
+  ybar,
+  width=\textwidth,
+  height=6cm,
+  ymin=0,
+  ymax=1.05,
+  ylabel={Mean recall},
+  symbolic x coords={No refresh,Cumulative,Sliding,Calibration,Small update},
+  xtick=data,
+  x tick label style={rotate=25, anchor=east, font=\small},
+  tick label style={font=\small},
+  label style={font=\small},
+  bar width=8pt,
+  legend style={font=\small, at={(0.5,-0.30)}, anchor=north, legend columns=2},
+  grid=major,
+]
+\addplot coordinates {
+  (No refresh,0.884) (Cumulative,0.955) (Sliding,0.949)
+  (Calibration,0.953) (Small update,0.956)
+};
+\addlegendentry{CVEfixes}
+\addplot coordinates {
+  (No refresh,0.559) (Cumulative,0.411) (Sliding,0.392)
+  (Calibration,0.424) (Small update,0.366)
+};
+\addlegendentry{DiverseVul proxy}
+\end{axis}
+\end{tikzpicture}

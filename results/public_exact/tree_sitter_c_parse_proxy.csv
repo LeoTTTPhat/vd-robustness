@@ -1,0 +1,9 @@
+transform,n,changed_n,parse_ok_n,parse_ok_rate
+blank_line_expansion,2732,1864,2239,0.8195461200585652
+brace_line_shift,2732,2661,2239,0.8195461200585652
+code_normalization_abstraction,2732,1410,2238,0.8191800878477306
+comment_banner,2732,2732,2239,0.8195461200585652
+control_flow_rewrite,2732,8,2239,0.8195461200585652
+dead_branch_after_opening_brace,2732,2732,2239,0.8195461200585652
+identifier_renaming,2732,2311,2239,0.8195461200585652
+safe_dead_code_carrier,2732,2732,2239,0.8195461200585652

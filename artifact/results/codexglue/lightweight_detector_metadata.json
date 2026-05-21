@@ -1,0 +1,20 @@
+{
+  "max_chars": 8000,
+  "models": {
+    "token_nb": {
+      "threshold": -26.717347064854966,
+      "validation_f1_at_threshold": 0.6070753443154199,
+      "prediction_file": "results/codexglue/token_nb_predictions.jsonl"
+    },
+    "char4_nb": {
+      "threshold": -1072.8839542404128,
+      "validation_f1_at_threshold": 0.6057667772390917,
+      "prediction_file": "results/codexglue/char4_nb_predictions.jsonl"
+    },
+    "hash_lr": {
+      "threshold": -50.91207604272461,
+      "validation_f1_at_threshold": 0.6057667772390917,
+      "prediction_file": "results/codexglue/hash_lr_predictions.jsonl"
+    }
+  }
+}

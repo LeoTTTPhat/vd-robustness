@@ -1,0 +1,2 @@
+dataset,detector,clean_n,clean_precision,clean_recall,clean_f1,clean_balanced_accuracy,clean_mcc,clean_pr_auc,variant_n,variant_precision,variant_recall,variant_f1,variant_balanced_accuracy,variant_mcc,variant_pr_auc,flip_rate,flip_ci_low,flip_ci_high,flip_count,flip_n,prediction_file
+codexglue_full,regvd_official_full,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,21856,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.00017573132119602132,0,21856,results/public_exact/regvd_codexglue_full_regrun/predictions.txt

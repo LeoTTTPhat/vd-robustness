@@ -1,0 +1,36 @@
+{
+  "status_date": "2026-05-18",
+  "packet": "results/semantic_audit/human_semantic_audit_packet.csv",
+  "protocol": "docs/human_semantic_audit_protocol.md",
+  "audit_units": 864,
+  "sampling": "40 changed samples per dataset/transformation where available; all rare control-flow rewrites.",
+  "ai_assisted_screening_completed": true,
+  "ai_assisted_screening_output": "results/semantic_audit/ai_semantic_audit.csv",
+  "ai_assisted_screening_summary": "results/semantic_audit/ai_semantic_audit_summary.json",
+  "ai_assisted_screening_result": {
+    "rows": 864,
+    "preserved": 480,
+    "preserved_with_precondition": 384,
+    "invalid_count": 0,
+    "uncertain_count": 0,
+    "excluded_by_ai_count": 0
+  },
+  "genuine_two_human_audit_completed": false,
+  "reason": "Codex cannot truthfully act as two independent human annotators. The audit packet is ready, but annotator labels, disagreement, adjudication, invalid rates, and exclusions require two independent human reviewers.",
+  "safe_next_step": "Have two C/C++-familiar humans independently fill annotator1_label and annotator2_label, then run an agreement/adjudication summarizer.",
+  "ai_dual_pass_screening_completed": true,
+  "ai_dual_pass_screening_output": "results/semantic_audit/ai_dual_pass_semantic_audit.csv",
+  "ai_dual_pass_screening_summary": "results/semantic_audit/ai_dual_pass_semantic_audit_summary.json",
+  "ai_dual_pass_screening_result": {
+    "rows": 864,
+    "raw_agreement": 0.9872685185185185,
+    "cohen_kappa": 0.9745827984595635,
+    "disagreement_count": 11,
+    "preserved": 469,
+    "preserved_with_precondition": 384,
+    "invalid_count": 0,
+    "uncertain_count": 11,
+    "excluded_count": 11,
+    "note": "AI dual-pass screening simulation only; not a genuine two-human audit."
+  }
+}

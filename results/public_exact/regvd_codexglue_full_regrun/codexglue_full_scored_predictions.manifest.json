@@ -1,0 +1,13 @@
+{
+  "checkpoint": "results/public_exact/regvd_codexglue_full_regrun/checkpoint-best-acc/model.bin",
+  "input": "external/GNN-ReGVD/dataset_codexglue_full/test.jsonl",
+  "output": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_predictions.jsonl",
+  "threshold": 0.4061337902791623,
+  "threshold_note": "validation_f1_optimal",
+  "validation_f1": 0.6086506086506086,
+  "rows": 24588,
+  "positive_predictions": 23998,
+  "score_min": 0.3705819249153137,
+  "score_max": 0.49118828773498535,
+  "score_mean": 0.4527634625243272
+}

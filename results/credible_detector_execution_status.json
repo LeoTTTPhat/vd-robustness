@@ -1,0 +1,32 @@
+{
+  "timestamp_local": "2026-05-17",
+  "detectors": {
+    "linevul": {
+      "status": "configured_not_executed",
+      "reason": "No local LineVul checkpoint or external repository checkout is present in this workspace."
+    },
+    "vulberta_devign": {
+      "status": "smoke_attempted_not_completed",
+      "model_id": "claudios/VulBERTa-mlm",
+      "actions_completed": [
+        "Installed transformers for Python 3.11",
+        "Installed safetensors for Python 3.11",
+        "Installed libclang for the VulBERTa tokenizer"
+      ],
+      "reason": "Model/tokenizer loading did not complete within the low-compute smoke-test window."
+    },
+    "codebert_devign": {
+      "status": "checkpoint_attempt_failed",
+      "attempted_model_id": "eunJ/codebert_vulnerabilty_detector",
+      "reason": "The public checkpoint identifier was inaccessible without authentication or unavailable at execution time."
+    },
+    "reveal": {
+      "status": "configured_not_executed",
+      "reason": "Graph extraction and ReVeal environment are not present in this low-compute workspace."
+    },
+    "regvd": {
+      "status": "configured_not_executed",
+      "reason": "GNN-ReGVD external repository and dependencies are not present in this low-compute workspace."
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "detector": "ReGVD official implementation 512-origin subset",
+  "source": "external/GNN-ReGVD",
+  "local_model_path": "models_public/graphcodebert_base_safetensors",
+  "train_file": "external/GNN-ReGVD/dataset_codex_512_subset/train.jsonl",
+  "eval_file": "external/GNN-ReGVD/dataset_codex_512_subset/valid.jsonl",
+  "test_file": "external/GNN-ReGVD/dataset_codex_512_subset/test.jsonl",
+  "train_n": 128,
+  "eval_n": 64,
+  "test_rows": 4608,
+  "test_origins": 512,
+  "output_dir": "results/public_exact/regvd_codex_512_subset",
+  "training_log": "results/public_exact/regvd_codex_512_subset/training_log.txt",
+  "prediction_file": "results/public_exact/regvd_codex_512_subset/predictions.txt",
+  "reported_eval_acc": 0.5,
+  "reported_test_acc": 0.5,
+  "prediction_distribution": {
+    "0": 4608,
+    "1": 0
+  },
+  "completed": true,
+  "checkpoint_removed_to_save_disk": true,
+  "interpretation": "Official ReGVD execution coverage on a larger transformed subset; all-safe collapse means it is not evidence of effective structural detection."
+}

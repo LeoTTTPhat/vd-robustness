@@ -1,0 +1,28 @@
+\begin{tikzpicture}[
+  x=1.05cm,
+  y=0.72cm,
+  font=\small
+]
+\foreach \x/\label in {0/0,1/.1\%,2/.2\%,3/.3\%,4/.4\%} {
+  \draw[black!25] (\x,0.45) -- (\x,4.65);
+  \node[anchor=north] at (\x,0.40) {\label};
+}
+\node[anchor=east] at (0,4.1) {Comment};
+\fill[red!55] (0,3.92) rectangle (4.03,4.18);
+\node[anchor=west] at (4.08,4.05) {0.403\%};
+
+\node[anchor=east] at (0,3.1) {Dead branch};
+\fill[red!55] (0,2.92) rectangle (2.20,3.18);
+\node[anchor=west] at (2.25,3.05) {0.220\%};
+
+\node[anchor=east] at (0,2.1) {Brace shift};
+\fill[red!55] (0,1.92) rectangle (0.01,2.18);
+\node[anchor=west] at (0.08,2.05) {0};
+
+\node[anchor=east] at (0,1.1) {Blank lines};
+\fill[red!55] (0,0.92) rectangle (0.01,1.18);
+\node[anchor=west] at (0.08,1.05) {0};
+
+\draw[black!45] (0,0.55) -- (4.4,0.55);
+\node[anchor=north] at (2.2,-0.10) {Maximum prediction flip rate};
+\end{tikzpicture}

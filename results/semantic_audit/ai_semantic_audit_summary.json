@@ -1,0 +1,119 @@
+{
+  "audit_type": "AI-assisted semantic screening audit; not a two-human audit.",
+  "input": "results/semantic_audit/human_semantic_audit_packet.csv",
+  "output": "results/semantic_audit/ai_semantic_audit.csv",
+  "rows": 864,
+  "label_counts": {
+    "preserved": 480,
+    "preserved_with_precondition": 384
+  },
+  "risk_counts": {
+    "low": 720,
+    "medium": 144
+  },
+  "excluded_by_ai_count": 0,
+  "excluded_by_ai_rate": 0.0,
+  "invalid_count": 0,
+  "uncertain_count": 0,
+  "by_transform": {
+    "blank_line_expansion": {
+      "preserved": 120
+    },
+    "brace_line_shift": {
+      "preserved": 120
+    },
+    "code_normalization_abstraction": {
+      "preserved": 120
+    },
+    "comment_banner": {
+      "preserved": 120
+    },
+    "control_flow_rewrite": {
+      "preserved_with_precondition": 24
+    },
+    "dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 120
+    },
+    "identifier_renaming": {
+      "preserved_with_precondition": 120
+    },
+    "safe_dead_code_carrier": {
+      "preserved_with_precondition": 120
+    }
+  },
+  "by_dataset_transform": {
+    "bigvul:blank_line_expansion": {
+      "preserved": 40
+    },
+    "bigvul:brace_line_shift": {
+      "preserved": 40
+    },
+    "bigvul:code_normalization_abstraction": {
+      "preserved": 40
+    },
+    "bigvul:comment_banner": {
+      "preserved": 40
+    },
+    "bigvul:control_flow_rewrite": {
+      "preserved_with_precondition": 4
+    },
+    "bigvul:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "bigvul:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "bigvul:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:blank_line_expansion": {
+      "preserved": 40
+    },
+    "codexglue:brace_line_shift": {
+      "preserved": 40
+    },
+    "codexglue:code_normalization_abstraction": {
+      "preserved": 40
+    },
+    "codexglue:comment_banner": {
+      "preserved": 40
+    },
+    "codexglue:control_flow_rewrite": {
+      "preserved_with_precondition": 8
+    },
+    "codexglue:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:blank_line_expansion": {
+      "preserved": 40
+    },
+    "diversevul:brace_line_shift": {
+      "preserved": 40
+    },
+    "diversevul:code_normalization_abstraction": {
+      "preserved": 40
+    },
+    "diversevul:comment_banner": {
+      "preserved": 40
+    },
+    "diversevul:control_flow_rewrite": {
+      "preserved_with_precondition": 12
+    },
+    "diversevul:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    }
+  },
+  "integrity_note": "Do not report this file as human annotation. A journal-ready human audit still requires two independent C/C++-familiar annotators, disagreement analysis, adjudication, and exclusion decisions."
+}

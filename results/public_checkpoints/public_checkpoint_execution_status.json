@@ -1,0 +1,150 @@
+{
+  "status_date": "2026-05-18",
+  "exact_public_primary_evaluation": {
+    "name": "codexglue_full",
+    "input": "data/processed/codexglue_test_expanded_transformed.jsonl",
+    "origins": 2732,
+    "transformed_variants": 21856,
+    "rows_per_detector": 24588,
+    "transformations_per_origin": 8,
+    "summary_csv": "results/public_exact/exact_public_codexglue_full_summary.csv",
+    "by_transform_csv": "results/public_exact/exact_public_codexglue_full_by_transform.csv"
+  },
+  "completed_runs": [
+    {
+      "detector": "VulBERTa-MLP-Devign public checkpoint",
+      "source": "claudios/VulBERTa-MLP-Devign",
+      "prediction_file": "results/public_exact/vulberta_mlp_devign/codexglue_full_predictions.jsonl",
+      "rows": 24588,
+      "clean_f1": 0.5772043010752688,
+      "variant_f1": 0.5551865382486438,
+      "flip_rate": 0.07009516837481698,
+      "flip_ci": [
+        0.06678542476137078,
+        0.07355600747636326
+      ],
+      "completed": true
+    },
+    {
+      "detector": "LineVul public checkpoint",
+      "source": "MickyMike/LineVul",
+      "prediction_file": "results/public_exact/linevul_mickymike/codexglue_full_predictions.jsonl",
+      "rows": 24588,
+      "clean_f1": 0.012618296529968454,
+      "variant_f1": 0.037368775883655975,
+      "flip_rate": 0.01221632503660322,
+      "flip_ci": [
+        0.01084330720364487,
+        0.013760780608879907
+      ],
+      "completed": true,
+      "conversion_note": "Exact public .bin weights converted to safetensors for current Transformers/PyTorch safety gate."
+    },
+    {
+      "detector": "GraphCodeBERT-Devign public checkpoint 512-origin subset",
+      "source": "mahdin70/graphcodebert-devign-code-vulnerability-detector",
+      "tokenizer": "microsoft/graphcodebert-base",
+      "prediction_file": "results/public_exact/graphcodebert_devign/codexglue_512_stratified_predictions.jsonl",
+      "summary_csv": "results/public_exact/graphcodebert_devign/codexglue_512_summary.csv",
+      "by_transform_csv": "results/public_exact/graphcodebert_devign/codexglue_512_by_transform.csv",
+      "rows": 4608,
+      "test_origins": 512,
+      "clean_f1": 0.5128205128205128,
+      "variant_f1": 0.5106926268751995,
+      "clean_pr_auc": 0.721755500275057,
+      "variant_pr_auc": 0.7201379114171249,
+      "flip_rate": 0.043701171875,
+      "flip_ci": [
+        0.03785652333901029,
+        0.05040090379691039
+      ],
+      "completed": true,
+      "note": "Exact public GraphCodeBERT-Devign checkpoint executed on the stratified 512-origin transformed CodeXGLUE subset because full-test inference was slower under the local CPU/MPS runtime."
+    },
+    {
+      "detector": "ReGVD official implementation 512-origin subset",
+      "source": "external/GNN-ReGVD",
+      "train_file": "external/GNN-ReGVD/dataset_codex_512_subset/train.jsonl",
+      "eval_file": "external/GNN-ReGVD/dataset_codex_512_subset/valid.jsonl",
+      "test_file": "external/GNN-ReGVD/dataset_codex_512_subset/test.jsonl",
+      "train_n": 128,
+      "eval_n": 64,
+      "test_rows": 4608,
+      "test_origins": 512,
+      "prediction_file": "results/public_exact/regvd_codex_512_subset/predictions.txt",
+      "training_log": "results/public_exact/regvd_codex_512_subset/training_log.txt",
+      "reported_eval_acc": 0.5,
+      "reported_test_acc": 0.5,
+      "prediction_distribution": {
+        "0": 4608,
+        "1": 0
+      },
+      "completed": true,
+      "note": "Run completed through the official GraphCodeBERT/ReGCN train/eval/test path on a 512-origin transformed CodeXGLUE subset. The checkpoint predicts all samples as safe, so it is reported as structural implementation coverage and failure evidence, not as effective robustness evidence."
+    },
+    {
+      "detector": "ReGVD official implementation full CodeXGLUE validation-calibrated",
+      "source": "external/GNN-ReGVD",
+      "train_file": "external/GNN-ReGVD/dataset_codexglue_full/train.jsonl",
+      "eval_file": "external/GNN-ReGVD/dataset_codexglue_full/valid.jsonl",
+      "test_file": "external/GNN-ReGVD/dataset_codexglue_full/test.jsonl",
+      "train_n": 21854,
+      "eval_n": 2732,
+      "test_rows": 24588,
+      "test_origins": 2732,
+      "checkpoint": "results/public_exact/regvd_codexglue_full_regrun/checkpoint-best-acc/model.bin",
+      "fixed_threshold_prediction_file": "results/public_exact/regvd_codexglue_full_regrun/predictions.txt",
+      "prediction_file": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_predictions.jsonl",
+      "summary_csv": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_summary.csv",
+      "by_transform_csv": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_by_transform.csv",
+      "training_log": "results/public_exact/regvd_codexglue_full_regrun/training_log.txt",
+      "validation_threshold": 0.4061337902791623,
+      "validation_f1": 0.6086506086506086,
+      "reported_eval_acc": 0.5655,
+      "fixed_threshold_note": "The upstream 0.5 threshold predicts all samples as safe on the full transformed test set.",
+      "clean_f1": 0.6307496823379923,
+      "variant_f1": 0.6321193953696026,
+      "clean_pr_auc": 0.504587616562026,
+      "variant_pr_auc": 0.5039876095036537,
+      "flip_rate": 0.008052708638360176,
+      "flip_ci": [
+        0.00695122344191468,
+        0.009327094929745242
+      ],
+      "positive_predictions": 23998,
+      "completed": true,
+      "note": "Official public ReGVD GraphCodeBERT/ReGCN implementation trained on the full CodeXGLUE training split and evaluated on the full transformed CodeXGLUE test set after replacing transformation-inserted reserved double-underscore markers. Non-collapsed predictions require validation-threshold calibration."
+    },
+    {
+      "detector": "AST-structural-RF local 512-origin subset",
+      "source": "scripts/run_ast_structural_detector.py",
+      "prediction_file": "results/public_exact/ast_structural_rf/codexglue_512_stratified_predictions.jsonl",
+      "summary_csv": "results/public_exact/ast_structural_rf/codexglue_512_summary.csv",
+      "by_transform_csv": "results/public_exact/ast_structural_rf/codexglue_512_by_transform.csv",
+      "rows": 4608,
+      "test_origins": 512,
+      "clean_f1": 0.6685236768802229,
+      "variant_f1": 0.6630830587827293,
+      "clean_pr_auc": 0.5951079548991736,
+      "variant_pr_auc": 0.5845007262952076,
+      "flip_rate": 0.019775390625,
+      "flip_ci": [
+        0.015939893688042484,
+        0.02451080678084781
+      ],
+      "completed": true,
+      "note": "Working non-collapsed local structural baseline using tree-sitter C AST node-type and shape features. This is not a public Devign/ReVeal checkpoint."
+    }
+  ],
+  "human_audit_status": "Not completed by Codex: a genuine two-annotator human audit requires two independent human annotators.",
+  "structural_model_evaluation": {
+    "official_structural_run": "ReGVD official implementation full CodeXGLUE validation-calibrated",
+    "fixed_threshold_failure": "results/public_exact/regvd_codexglue_full_regrun/predictions.txt",
+    "working_structural_baseline": "AST-structural-RF local 512-origin subset",
+    "regvd_summary_csv": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_summary.csv",
+    "regvd_by_transform_csv": "results/public_exact/regvd_codexglue_full_regrun/codexglue_full_scored_by_transform.csv",
+    "ast_summary_csv": "results/public_exact/ast_structural_rf/codexglue_512_summary.csv",
+    "ast_by_transform_csv": "results/public_exact/ast_structural_rf/codexglue_512_by_transform.csv"
+  },
+  "marker_audit": "Post-generation scan found no transformation-inserted __rvd, __robust_vd, or __dead markers in full transformed CodeXGLUE, Big-Vul, DiverseVul, the 512-origin subset, or the composition probe after replacing inserted marker names with rvd_* identifiers."
+}

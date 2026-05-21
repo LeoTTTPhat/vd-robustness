@@ -1,0 +1,6 @@
+{
+  "rows": 864,
+  "sample_size_target": 40,
+  "status": "annotation_packet_created_not_yet_human_annotated",
+  "protocol": "docs/human_semantic_audit_protocol.md"
+}

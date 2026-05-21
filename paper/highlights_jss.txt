@@ -1,0 +1,7 @@
+Highlights
+
+- Transformation tests reveal detector instability under harmless code edits.
+- Exact public VulBERTa flips 7.01% of CodeXGLUE transformed predictions.
+- LineVul and ReGVD robustness must be interpreted with calibration quality.
+- A two-annotator audit found no invalid transformations in 864 audit units.
+- The artifact supports reproducible robustness checks for CI security tools.

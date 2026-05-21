@@ -1,0 +1,3 @@
+detector,clean_correct_origins,robust_accuracy_all_variants_correct_given_clean_correct,clean_detected_vulnerable_origins,complete_resistance_all_vulnerable_variants_stay_detected,robust_recall_all_vulnerable_variants_detected,harmful_TP_to_FN,harmful_TN_to_FP,beneficial_FN_to_TP,beneficial_FP_to_TN,stable,total,harmful_flip_rate,beneficial_flip_rate
+VulBERTa-public,1749,0.7272727272727273,671,0.5409836065573771,0.2892430278884462,585,267,232,448,20324,21856,0.03898243045387994,0.031112737920937043
+LineVul-public,1480,0.9439189189189189,8,0.5,0.0031872509960159364,6,117,136,8,21589,21856,0.005627745241581259,0.006588579795021962

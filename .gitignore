@@ -1,0 +1,44 @@
+# Virtual Environment
+.venv_hf/
+.venv_torch/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Notebooks
+.ipynb_checkpoints/
+
+# User-specific / IDE
+.vscode/
+.idea/
+
+# Research Artifacts / Large Datasets / Model Weights
+data/raw/
+data/sources/
+data/processed/*.jsonl
+data/public_exact_slices/*.jsonl
+models/
+results/**/*.jsonl
+results/**/*.bin
+results/**/checkpoint-*/
+external/GNN-ReGVD/dataset*/
+artifact_codexglue_pilot.zip
+
+# LaTeX build byproducts
+paper/*.abs
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.spl
+paper/*.synctex.gz

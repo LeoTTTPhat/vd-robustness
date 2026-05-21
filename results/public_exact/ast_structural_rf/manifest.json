@@ -1,0 +1,14 @@
+{
+  "detector": "AST-structural-RF-local",
+  "scope_note": "Local non-collapsed structural baseline using tree-sitter C AST node-type and shape features; not a public Devign/ReVeal checkpoint.",
+  "train": "data/raw/codexglue_train.jsonl",
+  "validation": "data/raw/codexglue_validation.jsonl",
+  "input": "data/public_exact_slices/codexglue_512origins_stratified_expanded.jsonl",
+  "output": "results/public_exact/ast_structural_rf/codexglue_512_stratified_predictions.jsonl",
+  "validation_f1": 0.6216735253772291,
+  "threshold": 0.3553807311317203,
+  "feature_count": 52,
+  "train_n": 21854,
+  "validation_n": 2732,
+  "test_rows": 4608
+}

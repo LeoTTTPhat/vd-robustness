@@ -1,0 +1,21 @@
+{
+  "detector": "ReGVD official implementation smoke run",
+  "source": "external/GNN-ReGVD",
+  "local_status": "completed_true_implementation_smoke",
+  "local_model_path": "models_public/graphcodebert_base_safetensors",
+  "conversion_note": "GraphCodeBERT encoder weights were converted from the public .bin cache to safetensors after Transformers refused .bin loading under torch < 2.6.",
+  "train_file": "external/GNN-ReGVD/dataset_tiny/train.jsonl",
+  "eval_file": "external/GNN-ReGVD/dataset_tiny/valid.jsonl",
+  "test_file": "external/GNN-ReGVD/dataset_tiny/test.jsonl",
+  "train_n": 16,
+  "eval_n": 8,
+  "test_n": 8,
+  "output_dir": "results/public_exact/regvd_true_smoke",
+  "training_log": "results/public_exact/regvd_true_smoke/training_log.txt",
+  "prediction_file": "results/public_exact/regvd_true_smoke/predictions.txt",
+  "eval_acc": 0.5,
+  "eval_loss": 0.6972,
+  "test_acc": 0.5,
+  "completed_exact_predictions": true,
+  "publishable_full_benchmark": false
+}

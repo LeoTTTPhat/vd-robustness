@@ -1,0 +1,5 @@
+tokenizer,detector,truncated_n,truncated_flip_rate,nontruncated_n,nontruncated_flip_rate
+VulBERTa-tokenizer,VulBERTa-public,6002,0.07680773075641453,15854,0.06755392960766998
+VulBERTa-tokenizer,LineVul-public,6002,0.01299566811062979,15854,0.011921281695471174
+LineVul-tokenizer,VulBERTa-public,10981,0.07130498133139059,10875,0.0688735632183908
+LineVul-tokenizer,LineVul-public,10981,0.010745833712776614,10875,0.013701149425287357

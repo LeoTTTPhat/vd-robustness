@@ -1,0 +1,16 @@
+{
+  "audit_type": "AI-assisted dual-pass screening; not human annotation",
+  "input_human_packet": "results/semantic_audit/human_semantic_audit_packet.csv",
+  "input_ai_screening": "results/semantic_audit/ai_dual_pass_semantic_audit.csv",
+  "output": "results/semantic_audit/ai_assisted_semantic_audit_packet_filled.csv",
+  "rows": 864,
+  "missing_ai_rows": 0,
+  "ai_disagreement_count": 11,
+  "ai_adjudicated_label_counts": {
+    "preserved": 469,
+    "uncertain": 11,
+    "preserved_with_precondition": 384
+  },
+  "ai_excluded_count": 11,
+  "integrity_note": "The human annotator columns remain blank. Do not report this as a completed human audit."
+}

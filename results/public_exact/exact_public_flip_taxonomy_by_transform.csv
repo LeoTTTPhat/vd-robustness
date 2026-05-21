@@ -1,0 +1,17 @@
+detector,transform,harmful_TP_to_FN,harmful_TN_to_FP,beneficial_FN_to_TP,beneficial_FP_to_TN,stable,total,harmful_flip_rate,beneficial_flip_rate
+VulBERTa-public,blank_line_expansion,0,0,0,0,2732,2732,0.0,0.0
+VulBERTa-public,brace_line_shift,0,0,0,0,2732,2732,0.0,0.0
+VulBERTa-public,code_normalization_abstraction,15,20,14,18,2665,2732,0.01281112737920937,0.01171303074670571
+VulBERTa-public,comment_banner,161,40,29,124,2378,2732,0.07357247437774524,0.05600292825768668
+VulBERTa-public,control_flow_rewrite,0,0,0,0,2732,2732,0.0,0.0
+VulBERTa-public,dead_branch_after_opening_brace,88,93,94,76,2381,2732,0.06625183016105417,0.06222547584187409
+VulBERTa-public,identifier_renaming,221,13,7,156,2335,2732,0.08565153733528551,0.05966325036603221
+VulBERTa-public,safe_dead_code_carrier,100,101,88,74,2369,2732,0.07357247437774524,0.05929721815519766
+LineVul-public,blank_line_expansion,0,2,1,1,2728,2732,0.0007320644216691069,0.0007320644216691069
+LineVul-public,brace_line_shift,1,1,1,1,2728,2732,0.0007320644216691069,0.0007320644216691069
+LineVul-public,code_normalization_abstraction,1,0,0,0,2731,2732,0.00036603221083455345,0.0
+LineVul-public,comment_banner,3,1,1,1,2726,2732,0.0014641288433382138,0.0007320644216691069
+LineVul-public,control_flow_rewrite,0,0,0,0,2732,2732,0.0,0.0
+LineVul-public,dead_branch_after_opening_brace,0,51,58,2,2621,2732,0.018667642752562226,0.021961932650073207
+LineVul-public,identifier_renaming,1,1,2,1,2727,2732,0.0007320644216691069,0.0010980966325036604
+LineVul-public,safe_dead_code_carrier,0,61,73,2,2596,2732,0.02232796486090776,0.02745241581259151

@@ -1,0 +1,16 @@
+{
+  "detector": "ReGVD official implementation subset",
+  "source": "external/GNN-ReGVD",
+  "train_file": "external/GNN-ReGVD/dataset_codex_subset/train.jsonl",
+  "eval_file": "external/GNN-ReGVD/dataset_codex_subset/valid.jsonl",
+  "test_file": "external/GNN-ReGVD/dataset_codex_subset/test.jsonl",
+  "train_n": 128,
+  "eval_n": 64,
+  "test_rows": 1152,
+  "test_origins": 128,
+  "prediction_file": "results/public_exact/regvd_codex_subset/predictions.txt",
+  "reported_eval_acc": 0.5,
+  "reported_test_acc": 0.5,
+  "completed": true,
+  "note": "Run completed through official GraphCodeBERT/ReGCN train/eval/test path; predictions are all-safe and should not be treated as evidence of ReGVD effectiveness."
+}

@@ -1,0 +1,414 @@
+{
+  "aggregation": [
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "original_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6271028037383177,
+      "recall": 0.5346613545816733,
+      "f1": 0.5772043010752688,
+      "balanced_accuracy": 0.6322595872434433,
+      "mcc": 0.2700609995168829
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "original_clean_f1_calibrated",
+      "threshold": 0.08049174075663389,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.5408261287223823,
+      "recall": 0.8972111553784861,
+      "f1": 0.6748576565777644,
+      "balanced_accuracy": 0.6249766000318293,
+      "mcc": 0.2925322630483367
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "max_risk_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.5878084179970973,
+      "recall": 0.6454183266932271,
+      "f1": 0.6152677554120775,
+      "balanced_accuracy": 0.6304275113493217,
+      "mcc": 0.2600024096691921
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "mean_probability_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6333656644034917,
+      "recall": 0.5203187250996016,
+      "f1": 0.5713035870516185,
+      "balanced_accuracy": 0.6321972772417439,
+      "mcc": 0.27182107595529587
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "mean_probability_clean_f1_calibrated",
+      "threshold": 0.08372095895031435,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.5347319347319347,
+      "recall": 0.9139442231075697,
+      "f1": 0.6747058823529412,
+      "balanced_accuracy": 0.6191251244176982,
+      "mcc": 0.289076491168919
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "mean_logit_clean_f1_calibrated",
+      "threshold": 0.08259081882209508,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.5354960037611659,
+      "recall": 0.9075697211155378,
+      "f1": 0.6735659373151981,
+      "balanced_accuracy": 0.6193231137737473,
+      "mcc": 0.28642126060604445
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "majority_vote",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6261770244821092,
+      "recall": 0.5298804780876494,
+      "f1": 0.5740181268882175,
+      "balanced_accuracy": 0.6305461970668443,
+      "mcc": 0.266922901595895
+    },
+    {
+      "detector": "VulBERTa-public",
+      "strategy": "selective_abstain_on_disagreement",
+      "threshold": 0.5,
+      "coverage": 0.6939970717423133,
+      "n": 1896,
+      "precision": 0.6697416974169742,
+      "recall": 0.44925742574257427,
+      "f1": 0.5377777777777778,
+      "balanced_accuracy": 0.6423676834595224,
+      "mcc": 0.31163954869410954
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "original_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6153846153846154,
+      "recall": 0.006374501992031873,
+      "f1": 0.012618296529968454,
+      "balanced_accuracy": 0.5014946308199835,
+      "mcc": 0.021647101806862565
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "original_clean_f1_calibrated",
+      "threshold": 1.2448183440350944e-05,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.4602941176470588,
+      "recall": 0.9976095617529881,
+      "f1": 0.629937106918239,
+      "balanced_accuracy": 0.5018514971933525,
+      "mcc": 0.02790551804221073
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "max_risk_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.5172413793103449,
+      "recall": 0.07171314741035857,
+      "f1": 0.12596221133659902,
+      "balanced_accuracy": 0.5074205547478333,
+      "mcc": 0.030286813663733165
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "mean_probability_fixed_0.5",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6153846153846154,
+      "recall": 0.006374501992031873,
+      "f1": 0.012618296529968454,
+      "balanced_accuracy": 0.5014946308199835,
+      "mcc": 0.021647101806862565
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "mean_probability_clean_f1_calibrated",
+      "threshold": 1.3072426492625609e-05,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.45950897764748994,
+      "recall": 0.999203187250996,
+      "f1": 0.6295180722891566,
+      "balanced_accuracy": 0.500278641695911,
+      "mcc": 0.008385439226941023
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "mean_logit_clean_f1_calibrated",
+      "threshold": 1.3071954217213905e-05,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.45950897764748994,
+      "recall": 0.999203187250996,
+      "f1": 0.6295180722891566,
+      "balanced_accuracy": 0.500278641695911,
+      "mcc": 0.008385439226941023
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "majority_vote",
+      "threshold": 0.5,
+      "coverage": 1.0,
+      "n": 2732,
+      "precision": 0.6428571428571429,
+      "recall": 0.007171314741035857,
+      "f1": 0.014184397163120567,
+      "balanced_accuracy": 0.5018930371944854,
+      "mcc": 0.026424848695036928
+    },
+    {
+      "detector": "LineVul-public",
+      "strategy": "selective_abstain_on_disagreement",
+      "threshold": 0.5,
+      "coverage": 0.9385065885797951,
+      "n": 2564,
+      "precision": 0.6666666666666666,
+      "recall": 0.003421727972626176,
+      "f1": 0.006808510638297872,
+      "balanced_accuracy": 0.5009940181081769,
+      "mcc": 0.020492396762846837
+    }
+  ],
+  "logistic": [
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_brace_line_shift",
+      "coef_log_odds": -2.2143839852644245,
+      "odds_ratio": 0.10922077513640302,
+      "ci_low_or": 0.04149684836063359,
+      "ci_high_or": 0.28747189708781473,
+      "p_value": 7.297870988631772e-06
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_code_normalization_abstraction",
+      "coef_log_odds": 3.052100385258882,
+      "odds_ratio": 21.15974138974779,
+      "ci_low_or": 18.982655445088596,
+      "ci_high_or": 23.58651332929549,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_comment_banner",
+      "coef_log_odds": 5.216814855210691,
+      "odds_ratio": 184.34607901500337,
+      "ci_low_or": 169.69936150287444,
+      "ci_high_or": 200.2569517483437,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_control_flow_rewrite",
+      "coef_log_odds": -2.214423609637302,
+      "odds_ratio": 0.10921644741742519,
+      "ci_low_or": 0.04149789097704734,
+      "ci_high_or": 0.28744189416953164,
+      "p_value": 7.284864917300737e-06
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_dead_branch_after_opening_brace",
+      "coef_log_odds": 5.1266467786949335,
+      "odds_ratio": 168.4513154046334,
+      "ci_low_or": 155.11082632868894,
+      "ci_high_or": 182.93916893603026,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_identifier_renaming",
+      "coef_log_odds": 5.408461594734686,
+      "odds_ratio": 223.28781616632165,
+      "ci_low_or": 205.32529815315073,
+      "ci_high_or": 242.82175307563284,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "transform_safe_dead_code_carrier",
+      "coef_log_odds": 5.234623062030688,
+      "odds_ratio": 187.6583574508826,
+      "ci_low_or": 172.730475563626,
+      "ci_high_or": 203.8763513285841,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "label_vulnerable",
+      "coef_log_odds": 0.2502074865535015,
+      "odds_ratio": 1.2842918623370472,
+      "ci_low_or": 1.2361471358882643,
+      "ci_high_or": 1.3343117010742733,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "score_margin",
+      "coef_log_odds": -0.930398151725766,
+      "odds_ratio": 0.39439664940003255,
+      "ci_low_or": 0.3770446356816209,
+      "ci_high_or": 0.412547222099504,
+      "p_value": 0.0
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "code_len",
+      "coef_log_odds": 0.6442549361833009,
+      "odds_ratio": 1.9045674761957994,
+      "ci_low_or": 1.4651974077425312,
+      "ci_high_or": 2.475691843443563,
+      "p_value": 1.4738572069461497e-06
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "token_len_proxy",
+      "coef_log_odds": -0.7437965434865965,
+      "odds_ratio": 0.47530596594390345,
+      "ci_low_or": 0.3600001769264194,
+      "ci_high_or": 0.6275434728690207,
+      "p_value": 1.54776612859564e-07
+    },
+    {
+      "detector": "VulBERTa-public",
+      "feature": "truncation_proxy",
+      "coef_log_odds": 0.037382091746283964,
+      "odds_ratio": 1.0380895905347751,
+      "ci_low_or": 0.9858259277635532,
+      "ci_high_or": 1.0931240167535161,
+      "p_value": 0.15608647304291412
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_brace_line_shift",
+      "coef_log_odds": -0.5836170753209564,
+      "odds_ratio": 0.5578768302300678,
+      "ci_low_or": 0.45214486153666833,
+      "ci_high_or": 0.6883337270489094,
+      "p_value": 5.222082366529435e-08
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_code_normalization_abstraction",
+      "coef_log_odds": -3.7797129298857417,
+      "odds_ratio": 0.0228292440782185,
+      "ci_low_or": 0.009002633103967875,
+      "ci_high_or": 0.05789132792195749,
+      "p_value": 1.7763568394002505e-15
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_comment_banner",
+      "coef_log_odds": 0.38855355963599386,
+      "odds_ratio": 1.4748459735628532,
+      "ci_low_or": 1.2846065174992904,
+      "ci_high_or": 1.6932582982444364,
+      "p_value": 3.4967990281131733e-08
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_control_flow_rewrite",
+      "coef_log_odds": -3.9022413585103717,
+      "odds_ratio": 0.020196592871877018,
+      "ci_low_or": 0.007556092076318968,
+      "ci_high_or": 0.05398324418395221,
+      "p_value": 7.327471962526033e-15
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_dead_branch_after_opening_brace",
+      "coef_log_odds": 3.9432940046047205,
+      "odds_ratio": 51.58825367442897,
+      "ci_low_or": 47.258917647459135,
+      "ci_high_or": 56.31419528120151,
+      "p_value": 0.0
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_identifier_renaming",
+      "coef_log_odds": 0.3447047963211708,
+      "odds_ratio": 1.4115731565669303,
+      "ci_low_or": 1.2272540606682083,
+      "ci_high_or": 1.6235748083452592,
+      "p_value": 1.3761138537571327e-06
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "transform_safe_dead_code_carrier",
+      "coef_log_odds": 4.172073863260475,
+      "odds_ratio": 64.84980236979786,
+      "ci_low_or": 59.09550733527043,
+      "ci_high_or": 71.16440922560353,
+      "p_value": 0.0
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "label_vulnerable",
+      "coef_log_odds": 0.13332828123732907,
+      "odds_ratio": 1.1426250391297461,
+      "ci_low_or": 1.0878147511989922,
+      "ci_high_or": 1.2001969807885275,
+      "p_value": 1.060420402598794e-07
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "score_margin",
+      "coef_log_odds": -0.812425126477321,
+      "odds_ratio": 0.4437805362492296,
+      "ci_low_or": 0.390502702567855,
+      "ci_high_or": 0.504327276248319,
+      "p_value": 0.0
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "code_len",
+      "coef_log_odds": 0.5472420411570652,
+      "odds_ratio": 1.7284793631771427,
+      "ci_low_or": 1.151946652635025,
+      "ci_high_or": 2.5935583927390815,
+      "p_value": 0.008211845344529234
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "token_len_proxy",
+      "coef_log_odds": -1.2772317370210877,
+      "odds_ratio": 0.278808047141353,
+      "ci_low_or": 0.1860319677062903,
+      "ci_high_or": 0.4178525234625387,
+      "p_value": 6.124025730969151e-10
+    },
+    {
+      "detector": "LineVul-public",
+      "feature": "truncation_proxy",
+      "coef_log_odds": 0.2874547134123412,
+      "odds_ratio": 1.333030222406224,
+      "ci_low_or": 1.2334067861089069,
+      "ci_high_or": 1.440700338170091,
+      "p_value": 4.0611958240788226e-13
+    }
+  ]
+}

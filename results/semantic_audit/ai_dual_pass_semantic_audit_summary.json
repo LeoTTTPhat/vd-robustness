@@ -1,0 +1,203 @@
+{
+  "audit_type": "AI dual-pass semantic screening simulation; not a human two-annotator audit.",
+  "input": "results/semantic_audit/human_semantic_audit_packet.csv",
+  "output": "results/semantic_audit/ai_dual_pass_semantic_audit.csv",
+  "rows": 864,
+  "ai_annotator_protocol": [
+    "AI annotator 1: protocol-following deterministic screening pass.",
+    "AI annotator 2: conservative deterministic screening pass with additional macro/precondition checks."
+  ],
+  "raw_agreement": 0.9872685185185185,
+  "cohen_kappa": 0.9745827984595635,
+  "disagreement_count": 11,
+  "disagreement_rate": 0.01273148148148148,
+  "adjudicated_label_counts": {
+    "preserved": 469,
+    "uncertain": 11,
+    "preserved_with_precondition": 384
+  },
+  "invalid_count": 0,
+  "invalid_rate": 0.0,
+  "uncertain_count": 11,
+  "uncertain_rate": 0.01273148148148148,
+  "excluded_count": 11,
+  "excluded_rate": 0.01273148148148148,
+  "by_transform": {
+    "blank_line_expansion": {
+      "preserved": 120
+    },
+    "brace_line_shift": {
+      "preserved": 120
+    },
+    "code_normalization_abstraction": {
+      "preserved": 109,
+      "uncertain": 11
+    },
+    "comment_banner": {
+      "preserved": 120
+    },
+    "control_flow_rewrite": {
+      "preserved_with_precondition": 24
+    },
+    "dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 120
+    },
+    "identifier_renaming": {
+      "preserved_with_precondition": 120
+    },
+    "safe_dead_code_carrier": {
+      "preserved_with_precondition": 120
+    }
+  },
+  "by_dataset_transform": {
+    "bigvul:blank_line_expansion": {
+      "preserved": 40
+    },
+    "bigvul:brace_line_shift": {
+      "preserved": 40
+    },
+    "bigvul:code_normalization_abstraction": {
+      "preserved": 35,
+      "uncertain": 5
+    },
+    "bigvul:comment_banner": {
+      "preserved": 40
+    },
+    "bigvul:control_flow_rewrite": {
+      "preserved_with_precondition": 4
+    },
+    "bigvul:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "bigvul:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "bigvul:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:blank_line_expansion": {
+      "preserved": 40
+    },
+    "codexglue:brace_line_shift": {
+      "preserved": 40
+    },
+    "codexglue:code_normalization_abstraction": {
+      "preserved": 38,
+      "uncertain": 2
+    },
+    "codexglue:comment_banner": {
+      "preserved": 40
+    },
+    "codexglue:control_flow_rewrite": {
+      "preserved_with_precondition": 8
+    },
+    "codexglue:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "codexglue:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:blank_line_expansion": {
+      "preserved": 40
+    },
+    "diversevul:brace_line_shift": {
+      "preserved": 40
+    },
+    "diversevul:code_normalization_abstraction": {
+      "preserved": 36,
+      "uncertain": 4
+    },
+    "diversevul:comment_banner": {
+      "preserved": 40
+    },
+    "diversevul:control_flow_rewrite": {
+      "preserved_with_precondition": 12
+    },
+    "diversevul:dead_branch_after_opening_brace": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:identifier_renaming": {
+      "preserved_with_precondition": 40
+    },
+    "diversevul:safe_dead_code_carrier": {
+      "preserved_with_precondition": 40
+    }
+  },
+  "invalid_examples": [],
+  "uncertain_examples": [
+    {
+      "dataset": "codexglue",
+      "idx": "20618",
+      "variant_id": "20618__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "codexglue",
+      "idx": "16147",
+      "variant_id": "16147__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "bigvul",
+      "idx": "bigvul-bceaa90240b6019ed73b49965eac7d167610be69-2149-after",
+      "variant_id": "bigvul-bceaa90240b6019ed73b49965eac7d167610be69-2149-after__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "bigvul",
+      "idx": "bigvul-bd97120fc3d1a11f3124c7c9ba1d91f51829eb85-1945-after",
+      "variant_id": "bigvul-bd97120fc3d1a11f3124c7c9ba1d91f51829eb85-1945-after__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "bigvul",
+      "idx": "bigvul-364fb6e517fc4fbc8196a4afba4f77b3d5300c3e-1835-after",
+      "variant_id": "bigvul-364fb6e517fc4fbc8196a4afba4f77b3d5300c3e-1835-after__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "bigvul",
+      "idx": "bigvul-681fef8380eb818c0b845fca5d2ab1dcbab114ee-2680-after",
+      "variant_id": "bigvul-681fef8380eb818c0b845fca5d2ab1dcbab114ee-2680-after__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "bigvul",
+      "idx": "bigvul-3095060f479b86288e31c79ecbc5131a66bcd2f9-1422-after",
+      "variant_id": "bigvul-3095060f479b86288e31c79ecbc5131a66bcd2f9-1422-after__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "diversevul",
+      "idx": "diversevul-3a9b153c5591548612c3955c9600a98150c81875-1277",
+      "variant_id": "diversevul-3a9b153c5591548612c3955c9600a98150c81875-1277__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "diversevul",
+      "idx": "diversevul-eb7ba73079b73ca4ef91307ae1ef30b43468717b-2220",
+      "variant_id": "diversevul-eb7ba73079b73ca4ef91307ae1ef30b43468717b-2220__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    },
+    {
+      "dataset": "diversevul",
+      "idx": "diversevul-fce0b267446d6f3f631bb4680ebc3527bbbea002-462",
+      "variant_id": "diversevul-fce0b267446d6f3f631bb4680ebc3527bbbea002-462__code_normalization_abstraction",
+      "transform": "code_normalization_abstraction",
+      "ai_adjudication_notes": "AI screening passes disagree; adjudication uses the more conservative label."
+    }
+  ],
+  "integrity_note": "Do not report this artifact as human annotation. It intentionally leaves the human annotator columns in the audit packet untouched. A journal-ready audit still requires two independent C/C++-familiar humans, disagreement analysis, adjudication, and exclusion decisions."
+}

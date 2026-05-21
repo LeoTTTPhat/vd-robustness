@@ -1,0 +1,35 @@
+{
+  "scope_note": "Executed local detector-family reproductions. These are not the public heavyweight checkpoints unless separately stated.",
+  "training_dataset": "data/raw/codexglue_train.jsonl",
+  "validation_dataset": "data/raw/codexglue_validation.jsonl",
+  "detectors": {
+    "codebert_devign_local": {
+      "threshold": 0.3794259796842507,
+      "validation_f1": 0.6419452887537994,
+      "prediction_files": {
+        "codexglue_512_reviewer_probes": "results/reviewer_probes/local_family/codexglue_512_reviewer_probes/codebert_devign_local_predictions.jsonl"
+      }
+    },
+    "vulberta_devign_local": {
+      "threshold": 0.39475242229620494,
+      "validation_f1": 0.6457088965734046,
+      "prediction_files": {
+        "codexglue_512_reviewer_probes": "results/reviewer_probes/local_family/codexglue_512_reviewer_probes/vulberta_devign_local_predictions.jsonl"
+      }
+    },
+    "linevul_local": {
+      "threshold": 0.3794259796842507,
+      "validation_f1": 0.6419452887537994,
+      "prediction_files": {
+        "codexglue_512_reviewer_probes": "results/reviewer_probes/local_family/codexglue_512_reviewer_probes/linevul_local_predictions.jsonl"
+      }
+    },
+    "regvd_structural_local": {
+      "threshold": 0.3121971379516202,
+      "validation_f1": 0.6139608672659969,
+      "prediction_files": {
+        "codexglue_512_reviewer_probes": "results/reviewer_probes/local_family/codexglue_512_reviewer_probes/regvd_structural_local_predictions.jsonl"
+      }
+    }
+  }
+}

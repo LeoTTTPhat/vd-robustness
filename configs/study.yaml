@@ -1,0 +1,169 @@
+study:
+  title: "Robustness of Learning-Based Vulnerability Detectors under Semantics-Preserving Code Transformations"
+  target_journal: "Information and Software Technology"
+  compute_profile: "low"
+  phase_status:
+    phase_1_design_freeze: "completed"
+    phase_2_dataset_preparation: "codexglue_bigvul_diversevul_completed_low_compute_samples"
+    phase_3_variant_generation: "codexglue_bigvul_diversevul_variants_completed"
+    credible_detector_expansion: "configured_with_smoke_execution_attempts"
+  frozen_decisions:
+    primary_dataset: "CodeXGLUE/Devign defect detection"
+    secondary_dataset_next: "Big-Vul and DiverseVul"
+    initial_language_scope: "C/C++ function-level vulnerability detection"
+    initial_transformations:
+      - comment_banner
+      - blank_line_expansion
+      - brace_line_shift
+      - dead_branch_after_opening_brace
+    minimum_detector_families:
+      - "frozen code-model embeddings + lightweight classifier"
+      - "existing transformer vulnerability detector checkpoint"
+      - "LineVul"
+      - "VulBERTa"
+      - "CodeBERT fine-tuned on Devign"
+      - "ReVeal or ReGVD"
+      - "prompted compact/API code model on a subset"
+
+datasets:
+  primary:
+    - name: "CodeXGLUE/Devign defect detection"
+      language: "C/C++"
+      reason: "Small, widely used, easy to reproduce, suitable for laptop-scale pilot."
+      recommended_sample_size: 2732
+      local_files:
+        train: "data/raw/codexglue_train.jsonl"
+        validation: "data/raw/codexglue_validation.jsonl"
+        test: "data/raw/codexglue_test.jsonl"
+        transformed_validation: "data/processed/codexglue_validation_transformed.jsonl"
+        transformed_test: "data/processed/codexglue_test_transformed.jsonl"
+  secondary:
+    - name: "Big-Vul"
+      language: "C/C++"
+      reason: "Real-world CVE-linked vulnerable/fixed functions for external validity."
+      recommended_sample_size: 3000
+      local_files:
+        sample: "data/raw/bigvul.jsonl"
+        transformed_sample: "data/processed/bigvul_transformed.jsonl"
+        summary: "data/processed/bigvul_summary.json"
+        transform_summary: "data/processed/bigvul_transform_summary.json"
+    - name: "DiverseVul"
+      language: "C/C++"
+      reason: "Larger and more diverse project/CWE coverage for robustness replication."
+      recommended_sample_size: 5000
+      local_files:
+        sample: "data/raw/diversevul.jsonl"
+        transformed_sample: "data/processed/diversevul_transformed.jsonl"
+        summary: "data/processed/diversevul_summary.json"
+        transform_summary: "data/processed/diversevul_transform_summary.json"
+
+transformations:
+  safe_pilot:
+    - comment_banner
+    - blank_line_expansion
+    - brace_line_shift
+    - dead_branch_after_opening_brace
+  expanded:
+    - identifier_renaming
+    - control_flow_rewrite
+    - safe_dead_code_carrier
+    - code_normalization_abstraction
+  expanded_local_files:
+    codexglue_test:
+      transformed: "data/processed/codexglue_test_expanded_transformed.jsonl"
+      summary: "data/processed/codexglue_test_expanded_transform_summary.json"
+    bigvul:
+      transformed: "data/processed/bigvul_expanded_transformed.jsonl"
+      summary: "data/processed/bigvul_expanded_transform_summary.json"
+    diversevul:
+      transformed: "data/processed/diversevul_expanded_transformed.jsonl"
+      summary: "data/processed/diversevul_expanded_transform_summary.json"
+
+baselines:
+  low_compute:
+    - name: "CodeBERT/VulBERTa-style frozen embedding + logistic regression"
+      training: "lightweight"
+    - name: "LineVul existing checkpoint or reproduced small run"
+      training: "optional single GPU"
+    - name: "Prompted small code LLM"
+      training: "none"
+  expanded:
+    - name: "LineVul"
+      training: "checkpoint_or_external_repo"
+      local_status: "not_executed_no_local_checkpoint"
+    - name: "VulBERTa"
+      training: "checkpoint_inference"
+      local_status: "smoke_attempted_tokenizer_dependencies_installed_model_load_timeout"
+    - name: "CodeBERT fine-tuned on Devign"
+      training: "public_checkpoint_or_small_finetune"
+      local_status: "public_checkpoint_attempt_inaccessible_without_authentication"
+    - name: "ReVeal"
+      training: "moderate"
+      local_status: "manifested_not_executed"
+    - name: "Graph-based detector"
+      training: "moderate"
+    - name: "ReGVD"
+      training: "moderate"
+      local_status: "manifested_not_executed"
+
+metrics:
+  standard:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - auc
+  robustness:
+    - prediction_flip_rate
+    - robust_accuracy
+    - robust_recall
+    - complete_resistance
+    - transformation_sensitivity
+    - worst_case_f1_drop
+
+acceptance_strategy:
+  contribution_1: "A validated transformation benchmark for vulnerability detection robustness."
+  contribution_2: "A detector-agnostic metric suite for robustness under behavior-preserving edits."
+  contribution_3: "Empirical evidence across model families and datasets."
+  contribution_4: "Low-cost mitigation via transformed-variant aggregation."
+
+alternative_study_direction:
+  title: "Security Detector Aging: Treating Model Drift as a Software Maintenance Problem"
+  target_journal: "Information and Software Technology"
+  position: "Longitudinal empirical software engineering study of vulnerability detector maintenance."
+  rationale: "Likely strong IST fit because it frames learning-based security detectors as maintained software components whose performance can decay as projects, APIs, CWEs, and coding practices evolve."
+  primary_research_question: "How long does a learning-based vulnerability detector remain useful before maintenance is needed?"
+  recommended_primary_dataset: "CVEfixes or DiverseVul, depending on temporal metadata quality."
+  recommended_minimum_design:
+    - "Chronological train/validation/test windows."
+    - "Fixed-origin aging curve."
+    - "Rolling-origin maintenance policy comparison."
+    - "At least three detector families."
+    - "Explicit temporal leakage controls."
+    - "Drift metrics linked to performance decay."
+  local_docs:
+    protocol: "docs/detector_aging_model_drift_protocol.md"
+    execution_plan: "docs/detector_aging_execution_plan.md"
+
+agentic_security_study_direction:
+  title: "LLM Agents for Real-World Vulnerability Reproduction: A Verifiable, Sandboxed Empirical Study"
+  target_journal: "Information and Software Technology"
+  position: "Safety-aware empirical study of whether LLM agents can turn disclosed vulnerability reports into verified local reproductions."
+  novelty_risk_profile: "Highest novelty and citation potential, but higher execution and safety-review risk."
+  primary_research_question: "Can LLM agents produce reproducible, sandbox-verified vulnerability evidence under controlled guidance, budget, and safety policies?"
+  recommended_scope:
+    - "Disclosed and fixed vulnerabilities only."
+    - "Local-only sandbox verification."
+    - "Positive verifier on vulnerable version and negative verifier on patched version."
+    - "No live third-party targets."
+    - "Redacted trajectories and no turnkey exploit release."
+  recommended_minimum_design:
+    - "30-50 verified tasks after candidate triage."
+    - "At least three agent configurations."
+    - "At least three guidance levels."
+    - "Failure taxonomy for build, environment, mechanism, verifier, safety, and budget failures."
+    - "Manual audit of all reported successes."
+  local_docs:
+    protocol: "docs/llm_agent_vulnerability_reproduction_protocol.md"
+    execution_plan: "docs/llm_agent_vulnerability_reproduction_execution_plan.md"
+  local_script: "scripts/conduct_llm_agent_vuln_reproduction.py"

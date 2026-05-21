@@ -1,0 +1,68 @@
+{
+  "scope_note": "Executed local detector-family reproductions on expanded CodeXGLUE, Big-Vul, and DiverseVul transformed datasets. These are not public heavyweight checkpoint replicas.",
+  "training_dataset": "data/raw/codexglue_train.jsonl",
+  "validation_dataset": "data/raw/codexglue_validation.jsonl",
+  "datasets": [
+    "codexglue",
+    "bigvul",
+    "diversevul"
+  ],
+  "detectors": {
+    "codebert_devign_local": {
+      "threshold": 0.3794259796804313,
+      "validation_f1": 0.6419452887537994,
+      "prediction_files": {
+        "codexglue": "results/credible_local/codexglue/codebert_devign_local_predictions.jsonl",
+        "bigvul": "results/credible_local/bigvul/codebert_devign_local_predictions.jsonl",
+        "diversevul": "results/credible_local/diversevul/codebert_devign_local_predictions.jsonl"
+      },
+      "prediction_file_line_counts": {
+        "codexglue": 24588,
+        "bigvul": 27000,
+        "diversevul": 45000
+      }
+    },
+    "vulberta_devign_local": {
+      "threshold": 0.39475242195452426,
+      "validation_f1": 0.6457088965734046,
+      "prediction_files": {
+        "codexglue": "results/credible_local/codexglue/vulberta_devign_local_predictions.jsonl",
+        "bigvul": "results/credible_local/bigvul/vulberta_devign_local_predictions.jsonl",
+        "diversevul": "results/credible_local/diversevul/vulberta_devign_local_predictions.jsonl"
+      },
+      "prediction_file_line_counts": {
+        "codexglue": 24588,
+        "bigvul": 27000,
+        "diversevul": 45000
+      }
+    },
+    "linevul_local": {
+      "threshold": 0.3794259796804313,
+      "validation_f1": 0.6419452887537994,
+      "prediction_files": {
+        "codexglue": "results/credible_local/codexglue/linevul_local_predictions.jsonl",
+        "bigvul": "results/credible_local/bigvul/linevul_local_predictions.jsonl",
+        "diversevul": "results/credible_local/diversevul/linevul_local_predictions.jsonl"
+      },
+      "prediction_file_line_counts": {
+        "codexglue": 24588,
+        "bigvul": 27000,
+        "diversevul": 45000
+      }
+    },
+    "regvd_structural_local": {
+      "threshold": 0.3115123595447023,
+      "validation_f1": 0.6134320465362243,
+      "prediction_files": {
+        "codexglue": "results/credible_local/codexglue/regvd_structural_local_predictions.jsonl",
+        "bigvul": "results/credible_local/bigvul/regvd_structural_local_predictions.jsonl",
+        "diversevul": "results/credible_local/diversevul/regvd_structural_local_predictions.jsonl"
+      },
+      "prediction_file_line_counts": {
+        "codexglue": 24588,
+        "bigvul": 27000,
+        "diversevul": 45000
+      }
+    }
+  }
+}

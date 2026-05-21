@@ -1,0 +1,9 @@
+dataset,detector,transform,n,precision,recall,f1,balanced_accuracy,mcc,pr_auc,flip_rate,flip_ci_low,flip_ci_high,flip_count,flip_n
+codexglue_full,regvd_official_full,blank_line_expansion,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,brace_line_shift,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,code_normalization_abstraction,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,comment_banner,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,control_flow_rewrite,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,dead_branch_after_opening_brace,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,identifier_renaming,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
+codexglue_full,regvd_official_full,safe_dead_code_carrier,2732,0.0,0.0,0.0,0.5,0.0,0.45937042459736455,0.0,0.0,0.0014041233304323173,0,2732
