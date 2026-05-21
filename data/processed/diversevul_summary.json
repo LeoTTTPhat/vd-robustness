@@ -1,0 +1,17 @@
+{
+  "dataset": "diversevul",
+  "raw_rows_read": 5000,
+  "normalized_rows": 5000,
+  "skipped_raw_rows": 0,
+  "vulnerable": 257,
+  "non_vulnerable": 4743,
+  "vulnerable_ratio": 0.0514,
+  "split_counts": {
+    "test": 5000
+  },
+  "project_count": 521,
+  "cwe_count": 358,
+  "median_chars": 510,
+  "output": "data/raw/diversevul.jsonl",
+  "source_access": "local_huggingface_parquet"
+}

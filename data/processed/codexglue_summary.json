@@ -1,0 +1,60 @@
+{
+  "dataset": "google/code_x_glue_cc_defect_detection",
+  "source_base_url": "https://huggingface.co/datasets/google/code_x_glue_cc_defect_detection/resolve/main/data",
+  "splits": {
+    "train": {
+      "rows": 21854,
+      "secure": 11836,
+      "vulnerable": 10018,
+      "vulnerable_ratio": 0.45840578383819897,
+      "min_chars": 26,
+      "median_chars": 935,
+      "max_chars": 142346,
+      "columns": [
+        "commit_id",
+        "func",
+        "id",
+        "project",
+        "target"
+      ],
+      "parquet_file": "data/sources/codexglue/train-00000-of-00001.parquet",
+      "jsonl_file": "data/raw/codexglue_train.jsonl"
+    },
+    "validation": {
+      "rows": 2732,
+      "secure": 1545,
+      "vulnerable": 1187,
+      "vulnerable_ratio": 0.43448023426061494,
+      "min_chars": 41,
+      "median_chars": 928,
+      "max_chars": 137221,
+      "columns": [
+        "commit_id",
+        "func",
+        "id",
+        "project",
+        "target"
+      ],
+      "parquet_file": "data/sources/codexglue/validation-00000-of-00001.parquet",
+      "jsonl_file": "data/raw/codexglue_validation.jsonl"
+    },
+    "test": {
+      "rows": 2732,
+      "secure": 1477,
+      "vulnerable": 1255,
+      "vulnerable_ratio": 0.45937042459736455,
+      "min_chars": 28,
+      "median_chars": 966,
+      "max_chars": 142292,
+      "columns": [
+        "commit_id",
+        "func",
+        "id",
+        "project",
+        "target"
+      ],
+      "parquet_file": "data/sources/codexglue/test-00000-of-00001.parquet",
+      "jsonl_file": "data/raw/codexglue_test.jsonl"
+    }
+  }
+}

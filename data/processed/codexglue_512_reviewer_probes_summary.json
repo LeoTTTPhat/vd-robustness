@@ -1,0 +1,46 @@
+{
+  "origins": 512,
+  "rows": 4096,
+  "by_transform": {
+    "original": {
+      "n": 512,
+      "changed": 0,
+      "positive": 243
+    },
+    "identifier_renaming_fresh_marker": {
+      "n": 512,
+      "changed": 429,
+      "positive": 243
+    },
+    "identifier_renaming_in_vocab": {
+      "n": 512,
+      "changed": 429,
+      "positive": 243
+    },
+    "identifier_renaming_project_style": {
+      "n": 512,
+      "changed": 429,
+      "positive": 243
+    },
+    "comp_identifier_renaming__brace_line_shift": {
+      "n": 512,
+      "changed": 509,
+      "positive": 243
+    },
+    "comp_identifier_renaming__comment_banner": {
+      "n": 512,
+      "changed": 512,
+      "positive": 243
+    },
+    "comp_safe_dead_code__code_normalization": {
+      "n": 512,
+      "changed": 512,
+      "positive": 243
+    },
+    "comp_dead_branch__identifier_renaming__brace_line_shift": {
+      "n": 512,
+      "changed": 512,
+      "positive": 243
+    }
+  }
+}

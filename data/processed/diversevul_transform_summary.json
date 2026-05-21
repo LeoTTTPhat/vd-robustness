@@ -1,0 +1,77 @@
+{
+  "file": "data/processed/diversevul_transformed.jsonl",
+  "total_rows": 25000,
+  "original_samples": 5000,
+  "transformed_rows": 20000,
+  "transforms": {
+    "blank_line_expansion": {
+      "rows": 5000,
+      "changed_rows": 4807,
+      "unchanged_rows": 193,
+      "applicability_rate": 0.9614,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "blank lines inserted after semicolons": 4807,
+        "no semicolon-newline pattern": 193
+      }
+    },
+    "brace_line_shift": {
+      "rows": 5000,
+      "changed_rows": 1015,
+      "unchanged_rows": 3985,
+      "applicability_rate": 0.203,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "first function opening brace shifted": 1015,
+        "no simple signature-brace pattern": 3985
+      }
+    },
+    "comment_banner": {
+      "rows": 5000,
+      "changed_rows": 4999,
+      "unchanged_rows": 1,
+      "applicability_rate": 0.9998,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "comment inserted": 4999,
+        "no opening brace": 1
+      }
+    },
+    "dead_branch_after_opening_brace": {
+      "rows": 5000,
+      "changed_rows": 4999,
+      "unchanged_rows": 1,
+      "applicability_rate": 0.9998,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "unreachable branch inserted": 4999,
+        "no opening brace": 1
+      }
+    },
+    "original": {
+      "rows": 5000,
+      "changed_rows": 0,
+      "unchanged_rows": 5000,
+      "applicability_rate": null,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "original sample": 5000
+      }
+    }
+  }
+}

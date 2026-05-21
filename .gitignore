@@ -36,6 +36,7 @@ artifact_codexglue_pilot.zip
 # LaTeX build byproducts
 paper/*.abs
 paper/*.aux
+paper/*.blg
 paper/*.fdb_latexmk
 paper/*.fls
 paper/*.log

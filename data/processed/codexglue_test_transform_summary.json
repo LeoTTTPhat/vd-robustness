@@ -1,0 +1,75 @@
+{
+  "file": "data/processed/codexglue_test_transformed.jsonl",
+  "total_rows": 13660,
+  "original_samples": 2732,
+  "transformed_rows": 10928,
+  "transforms": {
+    "blank_line_expansion": {
+      "rows": 2732,
+      "changed_rows": 1864,
+      "unchanged_rows": 868,
+      "applicability_rate": 0.6822840409956076,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "blank lines inserted after semicolons": 1864,
+        "no semicolon-newline pattern": 868
+      }
+    },
+    "brace_line_shift": {
+      "rows": 2732,
+      "changed_rows": 2661,
+      "unchanged_rows": 71,
+      "applicability_rate": 0.9740117130307467,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "first function opening brace shifted": 2661,
+        "no simple signature-brace pattern": 71
+      }
+    },
+    "comment_banner": {
+      "rows": 2732,
+      "changed_rows": 2732,
+      "unchanged_rows": 0,
+      "applicability_rate": 1.0,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "comment inserted": 2732
+      }
+    },
+    "dead_branch_after_opening_brace": {
+      "rows": 2732,
+      "changed_rows": 2732,
+      "unchanged_rows": 0,
+      "applicability_rate": 1.0,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "unreachable branch inserted": 2732
+      }
+    },
+    "original": {
+      "rows": 2732,
+      "changed_rows": 0,
+      "unchanged_rows": 2732,
+      "applicability_rate": null,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "original sample": 2732
+      }
+    }
+  }
+}

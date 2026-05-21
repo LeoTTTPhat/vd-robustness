@@ -1,0 +1,17 @@
+{
+  "dataset": "bigvul",
+  "raw_rows_read": 2899,
+  "normalized_rows": 3000,
+  "skipped_raw_rows": 0,
+  "vulnerable": 101,
+  "non_vulnerable": 2899,
+  "vulnerable_ratio": 0.033666666666666664,
+  "split_counts": {
+    "test": 3000
+  },
+  "project_count": 180,
+  "cwe_count": 70,
+  "median_chars": 404,
+  "output": "data/raw/bigvul.jsonl",
+  "source_access": "local_huggingface_parquet"
+}

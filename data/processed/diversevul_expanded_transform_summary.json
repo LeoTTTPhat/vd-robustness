@@ -1,0 +1,133 @@
+{
+  "file": "data/processed/diversevul_expanded_transformed.jsonl",
+  "total_rows": 45000,
+  "original_samples": 5000,
+  "transformed_rows": 40000,
+  "transforms": {
+    "blank_line_expansion": {
+      "rows": 5000,
+      "changed_rows": 4807,
+      "unchanged_rows": 193,
+      "applicability_rate": 0.9614,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "blank lines inserted after semicolons": 4807,
+        "no semicolon-newline pattern": 193
+      }
+    },
+    "brace_line_shift": {
+      "rows": 5000,
+      "changed_rows": 1015,
+      "unchanged_rows": 3985,
+      "applicability_rate": 0.203,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "first function opening brace shifted": 1015,
+        "no simple signature-brace pattern": 3985
+      }
+    },
+    "code_normalization_abstraction": {
+      "rows": 5000,
+      "changed_rows": 2601,
+      "unchanged_rows": 2399,
+      "applicability_rate": 0.5202,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "parenthesized simple return expressions": 2601,
+        "no simple return expression": 2399
+      }
+    },
+    "comment_banner": {
+      "rows": 5000,
+      "changed_rows": 4999,
+      "unchanged_rows": 1,
+      "applicability_rate": 0.9998,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "comment inserted": 4999,
+        "no opening brace": 1
+      }
+    },
+    "control_flow_rewrite": {
+      "rows": 5000,
+      "changed_rows": 12,
+      "unchanged_rows": 4988,
+      "applicability_rate": 0.0024,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "no simple returning if/else pattern": 4988,
+        "inverted simple returning if/else": 12
+      }
+    },
+    "dead_branch_after_opening_brace": {
+      "rows": 5000,
+      "changed_rows": 4999,
+      "unchanged_rows": 1,
+      "applicability_rate": 0.9998,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "unreachable branch inserted": 4999,
+        "no opening brace": 1
+      }
+    },
+    "identifier_renaming": {
+      "rows": 5000,
+      "changed_rows": 3393,
+      "unchanged_rows": 1607,
+      "applicability_rate": 0.6786,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "renamed simple identifier": 3393,
+        "no simple identifier with repeated use": 1607
+      }
+    },
+    "original": {
+      "rows": 5000,
+      "changed_rows": 0,
+      "unchanged_rows": 5000,
+      "applicability_rate": null,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "original sample": 5000
+      }
+    },
+    "safe_dead_code_carrier": {
+      "rows": 5000,
+      "changed_rows": 4999,
+      "unchanged_rows": 1,
+      "applicability_rate": 0.9998,
+      "target_counts": {
+        "0": 4743,
+        "1": 257
+      },
+      "validation_notes": {
+        "compile-time unreachable carrier inserted": 4999,
+        "no opening brace": 1
+      }
+    }
+  }
+}

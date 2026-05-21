@@ -1,0 +1,130 @@
+{
+  "file": "data/processed/codexglue_test_expanded_transformed.jsonl",
+  "total_rows": 24588,
+  "original_samples": 2732,
+  "transformed_rows": 21856,
+  "transforms": {
+    "blank_line_expansion": {
+      "rows": 2732,
+      "changed_rows": 1864,
+      "unchanged_rows": 868,
+      "applicability_rate": 0.6822840409956076,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "blank lines inserted after semicolons": 1864,
+        "no semicolon-newline pattern": 868
+      }
+    },
+    "brace_line_shift": {
+      "rows": 2732,
+      "changed_rows": 2661,
+      "unchanged_rows": 71,
+      "applicability_rate": 0.9740117130307467,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "first function opening brace shifted": 2661,
+        "no simple signature-brace pattern": 71
+      }
+    },
+    "code_normalization_abstraction": {
+      "rows": 2732,
+      "changed_rows": 1410,
+      "unchanged_rows": 1322,
+      "applicability_rate": 0.5161054172767203,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "parenthesized simple return expressions": 1410,
+        "no simple return expression": 1322
+      }
+    },
+    "comment_banner": {
+      "rows": 2732,
+      "changed_rows": 2732,
+      "unchanged_rows": 0,
+      "applicability_rate": 1.0,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "comment inserted": 2732
+      }
+    },
+    "control_flow_rewrite": {
+      "rows": 2732,
+      "changed_rows": 8,
+      "unchanged_rows": 2724,
+      "applicability_rate": 0.0029282576866764276,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "no simple returning if/else pattern": 2724,
+        "inverted simple returning if/else": 8
+      }
+    },
+    "dead_branch_after_opening_brace": {
+      "rows": 2732,
+      "changed_rows": 2732,
+      "unchanged_rows": 0,
+      "applicability_rate": 1.0,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "unreachable branch inserted": 2732
+      }
+    },
+    "identifier_renaming": {
+      "rows": 2732,
+      "changed_rows": 2311,
+      "unchanged_rows": 421,
+      "applicability_rate": 0.845900439238653,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "renamed simple identifier": 2311,
+        "no simple identifier with repeated use": 421
+      }
+    },
+    "original": {
+      "rows": 2732,
+      "changed_rows": 0,
+      "unchanged_rows": 2732,
+      "applicability_rate": null,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "original sample": 2732
+      }
+    },
+    "safe_dead_code_carrier": {
+      "rows": 2732,
+      "changed_rows": 2732,
+      "unchanged_rows": 0,
+      "applicability_rate": 1.0,
+      "target_counts": {
+        "0": 1477,
+        "1": 1255
+      },
+      "validation_notes": {
+        "compile-time unreachable carrier inserted": 2732
+      }
+    }
+  }
+}
