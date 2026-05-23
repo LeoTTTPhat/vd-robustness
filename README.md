@@ -75,13 +75,6 @@ docs/
   human_semantic_audit_protocol.md   Human audit instructions.
   phase_*_report.md                  Execution notes from earlier phases.
 
-paper/
-  main.tex                           JSS-oriented manuscript.
-  main.pdf                           Compiled manuscript.
-  highlights_jss.txt                 Elsevier/JSS highlights.
-  figures/                           TikZ figures used in the article.
-  references.bib                     Bibliography.
-
 results/
   public_exact/                      Exact public checkpoint summaries.
   public_checkpoints/                Public checkpoint execution status.
@@ -238,13 +231,6 @@ python3 scripts/counterfactual_patch_pair_probe.py --root . \
   --prediction VulBERTa-public=results/public_exact/vulberta_mlp_devign/juliet_sard_pairs_original_predictions.jsonl \
   --prediction LineVul-public=results/public_exact/linevul_mickymike/juliet_sard_pairs_original_predictions.jsonl \
   --prediction ReGVD-official-validation-calibrated=results/public_exact/regvd_codexglue_full_regrun/juliet_sard_pairs_original_scored_predictions.jsonl
-```
-
-Rebuild the manuscript PDF:
-
-```bash
-cd paper
-latexmk -pdf -interaction=nonstopmode main.tex
 ```
 
 ## Semantic Audit
