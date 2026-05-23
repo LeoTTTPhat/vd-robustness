@@ -1,0 +1,28 @@
+[
+  {
+    "detector": "hash_lr_original",
+    "train_rows": 21854,
+    "threshold": 1.1263860064744957,
+    "validation_f1": 0.6213821618428825,
+    "codexglue_clean_f1": 0.6378066378066377,
+    "codexglue_tifr": 0.013727932893380123,
+    "bigvul_vdcp": 0.37623762376237624,
+    "juliet_sard_vdcp": 0.675,
+    "codexglue_predictions": "results/consistency_cure_6000/hash_lr_original_codexglue_predictions.jsonl",
+    "bigvul_predictions": "results/consistency_cure_6000/hash_lr_original_bigvul_patch_predictions.jsonl",
+    "juliet_predictions": "results/consistency_cure_6000/hash_lr_original_juliet_sard_predictions.jsonl"
+  },
+  {
+    "detector": "hash_lr_consistency",
+    "train_rows": 42053,
+    "threshold": -6.912284035682678,
+    "validation_f1": 0.606687898089172,
+    "codexglue_clean_f1": 0.6314688970203868,
+    "codexglue_tifr": 0.009856693432213836,
+    "bigvul_vdcp": 0.36633663366336633,
+    "juliet_sard_vdcp": 0.5575,
+    "codexglue_predictions": "results/consistency_cure_6000/hash_lr_consistency_codexglue_predictions.jsonl",
+    "bigvul_predictions": "results/consistency_cure_6000/hash_lr_consistency_bigvul_patch_predictions.jsonl",
+    "juliet_predictions": "results/consistency_cure_6000/hash_lr_consistency_juliet_sard_predictions.jsonl"
+  }
+]

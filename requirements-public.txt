@@ -1,0 +1,15 @@
+# Recommended replay environment for public-checkpoint inference.
+# The lightweight transformation and metric scripts use the Python standard
+# library plus scikit-learn/numpy where noted in the script headers.
+#
+# Python: 3.12
+numpy==2.2.6
+scikit-learn==1.7.2
+torch==2.6.0
+transformers==4.57.1
+safetensors==0.6.2
+tokenizers==0.22.1
+accelerate==1.13.0
+tree-sitter==0.25.2
+tree-sitter-c==0.24.1
+tqdm==4.67.1

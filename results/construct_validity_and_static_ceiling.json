@@ -1,0 +1,170 @@
+{
+  "audit_per_transform_bounds": [
+    {
+      "transform": "blank_line_expansion",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "brace_line_shift",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "code_normalization_abstraction",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "comment_banner",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "control_flow_rewrite",
+      "audit_n": 24,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.125
+    },
+    {
+      "transform": "dead_branch_after_opening_brace",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "identifier_renaming",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    },
+    {
+      "transform": "safe_dead_code_carrier",
+      "audit_n": 120,
+      "invalid": 0,
+      "rule_of_three_upper_95": 0.025
+    }
+  ],
+  "compile_anchor_stratified": [
+    {
+      "transform": "blank_line_expansion",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "brace_line_shift",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "code_normalization_abstraction",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "comment_banner",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "control_flow_rewrite",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "dead_branch_after_opening_brace",
+      "sample_n": 10,
+      "original_compile": 1,
+      "transformed_compile": 1,
+      "both_compile": 1,
+      "both_compile_rate": 0.1
+    },
+    {
+      "transform": "identifier_renaming",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    },
+    {
+      "transform": "safe_dead_code_carrier",
+      "sample_n": 10,
+      "original_compile": 0,
+      "transformed_compile": 0,
+      "both_compile": 0,
+      "both_compile_rate": 0.0
+    }
+  ],
+  "static_rule_scanner": {
+    "detector": "comment-stripped risky-token static scanner",
+    "clean_pred_positive": 0.08894582723279648,
+    "clean_precision": 0.49794238683127573,
+    "clean_recall": 0.09641434262948208,
+    "clean_f1": 0.16154873164218958,
+    "flip_rate": 0.0,
+    "flips": 0,
+    "pairs": 21856,
+    "by_transform": {
+      "blank_line_expansion": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "brace_line_shift": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "code_normalization_abstraction": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "comment_banner": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "control_flow_rewrite": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "dead_branch_after_opening_brace": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "identifier_renaming": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      },
+      "safe_dead_code_carrier": {
+        "flips": 0,
+        "pairs": 2732,
+        "flip_rate": 0.0
+      }
+    }
+  }
+}

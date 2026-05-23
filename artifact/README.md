@@ -1,20 +1,32 @@
-# Robust VD Pilot Artifact
+# Robust VD Article Artifact
 
-This artifact contains the low-compute pilot package for the study:
+This artifact contains the article package for the study:
 
 **Robustness of Learning-Based Vulnerability Detectors under
 Semantics-Preserving Code Transformations**
 
 ## Contents
 
-- `configs/`: frozen study configuration.
+- `configs/`: study configuration.
 - `scripts/`: data preparation, transformation, validation, detector, and
   analysis scripts.
-- `results/codexglue/`: pilot validation, prediction, robustness, statistical,
-  and aggregation outputs.
+- `results/codexglue/`: validation, prediction, robustness, statistical,
+  and aggregation outputs for the lightweight replay sample.
 - `data_sample/`: small samples from the normalized and transformed
   CodeXGLUE/Devign files.
 - `paper/`: current TeX manuscript and compiled PDF.
+- `requirements-public.txt`: pinned Python package set for public-checkpoint
+  replay.
+- `results/calibration_invariant_robustness*.{csv,json}`: threshold-integrated
+  flip rate and rank-displacement robustness summaries used in the article.
+- `results/counterfactual_patch_pair_probe*.{csv,json}`: exploratory Big-Vul
+  before/after patch-pair ordering and sparse CWE diagnostics for exact public
+  VulBERTa, LineVul, and ReGVD checkpoints, with supporting local-family rows.
+- `results/juliet_sard_counterfactual_patch_pair_probe*.{csv,json}`:
+  Juliet/SARD C bad/good function-pair VDCP summaries for exact public
+  VulBERTa, LineVul, and ReGVD checkpoints.
+- `results/consistency_cure_6000/`: clean F1, TIFR, and VDCP before/after the
+  transformation-consistency training probe.
 
 ## Reproduction
 
@@ -36,10 +48,23 @@ python3 scripts/analyze_predictions.py \
   --output results/codexglue/pilot_analysis.json
 ```
 
+If the full public-checkpoint prediction files are present in the main
+repository layout, regenerate the calibration-invariant metrics with:
+
+```bash
+python3 scripts/calibration_invariant_robustness.py --root .
+```
+
+Regenerate the counterfactual patch-pair probe with:
+
+```bash
+python3 scripts/counterfactual_patch_pair_probe.py --root .
+```
+
 ## Scope
 
-This is a pilot artifact. It validates the workflow using three local
-lightweight detectors. The final IST-scale evaluation should add stronger
-transformer and graph-based detectors, complete the manual audit sheet, and
-replicate results on a secondary dataset such as Big-Vul.
-
+The main repository contains the full article package, including exact public
+checkpoint summaries and construct-validity diagnostics. This `artifact/`
+directory keeps a compact copy of the manuscript, small sample data, and
+lightweight replay workflow for reviewers who want a quick local check before
+running larger public-checkpoint inference.

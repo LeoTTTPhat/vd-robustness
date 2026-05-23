@@ -1,0 +1,13 @@
+{
+  "checkpoint": "results/public_exact/regvd_codexglue_full_regrun/checkpoint-best-acc/model.bin",
+  "input": "data/public_exact_slices/bigvul_101_patch_pairs_expanded_regvd.jsonl",
+  "output": "results/public_exact/regvd_codexglue_full_regrun/bigvul_patch_pairs_scored_predictions.jsonl",
+  "threshold": 0.4061337902791623,
+  "threshold_note": "fixed",
+  "validation_f1": null,
+  "rows": 1818,
+  "positive_predictions": 1818,
+  "score_min": 0.4118998944759369,
+  "score_max": 0.49674662947654724,
+  "score_mean": 0.4579443267502538
+}

@@ -1,0 +1,13 @@
+{
+  "checkpoint": "results/public_exact/regvd_codexglue_full_regrun/checkpoint-best-acc/model.bin",
+  "input": "data/raw/juliet_sard_pairs.jsonl",
+  "output": "results/public_exact/regvd_codexglue_full_regrun/juliet_sard_pairs_original_scored_predictions.jsonl",
+  "threshold": 0.4061337902791623,
+  "threshold_note": "fixed",
+  "validation_f1": null,
+  "rows": 800,
+  "positive_predictions": 793,
+  "score_min": 0.3989027440547943,
+  "score_max": 0.4792330265045166,
+  "score_mean": 0.4484232446178794
+}

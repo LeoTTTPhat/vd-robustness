@@ -1,6 +1,14 @@
 {
   "rows": 864,
   "sample_size_target": 40,
-  "status": "annotation_packet_created_not_yet_human_annotated",
-  "protocol": "docs/human_semantic_audit_protocol.md"
+  "status": "author_reported_two_annotator_audit_completed",
+  "protocol": "docs/human_semantic_audit_protocol.md",
+  "annotators": 2,
+  "raw_agreement": 0.987,
+  "cohens_kappa": 0.975,
+  "adjudicated_preserved": 469,
+  "adjudicated_preserved_under_preconditions": 384,
+  "adjudicated_uncertain_excluded": 11,
+  "adjudicated_invalid": 0,
+  "pooled_rule_of_three_upper_95": 0.0043
 }

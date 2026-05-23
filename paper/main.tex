@@ -9,7 +9,10 @@
 \usepackage{multirow}
 \usepackage{url}
 \usepackage{xcolor}
+\usepackage{microtype}
+\usepackage[justification=raggedright,singlelinecheck=false]{caption}
 \usepackage{listings}
+\usepackage[section]{placeins}
 \usepackage{tikz}
 \usepackage[most]{tcolorbox}
 \usetikzlibrary{arrows.meta,positioning}
@@ -57,6 +60,8 @@
 \begin{document}
 
 \title[mode=title]{Robustness of Learning-Based Vulnerability Detectors under Semantics-Preserving Code Transformations}
+\shorttitle{Robustness of Vulnerability Detectors}
+\shortauthors{Phat T. Tran-Truong and Xuan-Bach Le}
 
 \author[1,2]{Phat T. Tran-Truong}[orcid=0000-0003-3199-6333]
 \ead{phatttt@hcmut.edu.vn}
@@ -69,32 +74,32 @@
 \address[2]{Vietnam National University Ho Chi Minh City, Linh Xuan Ward, Ho Chi Minh City, Vietnam}
 
 \begin{abstract}
-Learning-based vulnerability detectors are increasingly evaluated by clean
-benchmark performance, yet software systems practice requires stable behavior
-when code is reformatted, renamed, commented, normalized, or conservatively
-rewritten without changing vulnerability status. This article presents a
-transformation-based verification and validation protocol for vulnerability
-detection tools and applies it to public detector evidence on CodeXGLUE/Devign.
-The primary experiment
-evaluates exact public VulBERTa and LineVul checkpoints and the official ReGVD
-graph implementation on the full transformed CodeXGLUE test set of 2,732
-original functions and 21,856 transformed variants; a public GraphCodeBERT-
-Devign checkpoint and an AST-structural baseline provide additional subset
-evidence, while Big-Vul and DiverseVul are used only as external-validity probes (EVPs)
-for transformation applicability and imbalance-aware reporting. On full
-CodeXGLUE, VulBERTa flips 7.01\% of transformed predictions and drops from
-0.577 clean F1 to 0.555 variant F1, with identifier renaming, comments, and
-dead-code carriers producing the largest harmful flips. Public LineVul appears
-stable at the fixed checkpoint threshold but has near-zero vulnerable recall;
-official ReGVD collapses at the upstream 0.5 threshold and requires validation
-calibration to produce a non-collapsed full-test structural row. A completed
-two-annotator audit validates a randomly sampled subset with no invalid
-examples and a 95\% upper bound of 0.43\% on the invalid rate; 11 conservative
-uncertain cases are excluded. The results show that
-robustness cannot be inferred from clean benchmark performance alone and that
-reported robustness must be interpreted jointly with detector calibration,
-class imbalance, predictive utility, and the software-quality role in which a
-detector is deployed.
+Learning-based vulnerability detectors are usually evaluated on clean benchmark
+functions, but software engineering workflows also require stable behavior when
+source code is reformatted, renamed, commented, normalized, or conservatively
+rewritten without changing vulnerability status. This article presents a paired
+metamorphic-testing benchmark for function-level vulnerability detectors. The
+primary experiment evaluates exact public VulBERTa and LineVul checkpoints and
+the official ReGVD graph implementation on the full transformed CodeXGLUE test
+set, covering 2,732 original functions and 21,856 transformed variants; a public
+GraphCodeBERT-Devign checkpoint, an AST-structural baseline, Big-Vul,
+DiverseVul, and Juliet/SARD provide supporting evidence. We combine
+thresholded flip rates with calibration-invariant score metrics and an
+exploratory vulnerability-dominance counterfactual pair (VDCP) probe that asks
+whether vulnerable pre-repair code receives higher risk than its patched
+counterpart. VulBERTa provides the clearest full-test signal: it flips 7.01\%
+of transformed predictions, drops from 0.577 clean F1 to 0.555 variant F1, and
+adds 58.3 true-positive-to-false-negative flips per 1,000 vulnerable
+function-variant pairs. Calibration-invariant metrics reveal hidden instability
+in operating-point-confounded detectors: LineVul has only 1.22\% decision flips
+but TIFR 9.76\%, while validation-calibrated ReGVD has 0.81\% decision flips
+but TIFR 7.23\%. The VDCP probe shows that transformation invariance and
+vulnerability-fix ordering are distinct properties, with exact public detectors
+often failing to rank vulnerable code above patched code. A two-annotator audit
+of a random sample finds no invalid transformed examples, with a 95\% upper
+bound of 0.43\% on the invalid rate. Overall, robustness claims for
+vulnerability detectors must be interpreted jointly with calibration, class
+imbalance, predictive utility, and deployment role.
 \end{abstract}
 
 \begin{keywords}
@@ -148,8 +153,16 @@ the function computes or whether it contains a vulnerability. A vulnerability
 detector that flags a vulnerable function before a harmless edit but misses the
 behaviorally equivalent version after the edit is brittle as a software quality
 assurance tool, even if its clean benchmark F1 score is acceptable.
+Empirical refactoring and repository-mining studies show that
+behavior-preserving edits such as renaming and other refactorings occur during software
+maintenance~\cite{murphyhill2012refactor,kim2014microsoft,
+peruma2018rename}. We do not claim that the transformation frequencies in this
+article match field edit frequencies in real commits. Instead, the transformations
+are controlled probes of robustness-relevant edit types, with dead-code
+carriers and marker-style renaming interpreted as stress tests for token
+reliance rather than estimates of ordinary maintenance prevalence.
 
-Robustness under semantics-preserving transformation is therefore a natural
+Robustness under semantics-preserving transformations is therefore a natural
 metamorphic property for vulnerability detection. Metamorphic testing evaluates
 software by applying transformations that should preserve an expected relation
 between inputs and outputs~\cite{chen2018metamorphic}; a substantial body of
@@ -168,51 +181,75 @@ separate vulnerable from non-vulnerable examples under the benchmark
 distribution; transformation robustness measures whether that behavior remains
 stable under realistic source-level variation.
 
-Listing~\ref{lst:motivating-example} illustrates the intuition. The two
-functions differ syntactically: the transformed version shifts the brace layout,
-adds a comment, and inserts an unreachable branch. These edits should not
-change the behavior of the function. A robust vulnerability detector should
-therefore preserve its prediction across both versions.
+Listing~\ref{lst:motivating-example} shows a real CodeXGLUE/Devign test case
+from the paired artifact. The variant renames a function parameter and its
+uses, leaving the data flow unchanged. Under the public VulBERTa checkpoint,
+the vulnerable-class score drops from 0.781 on the original function to 0.256
+on the renamed variant, crossing the fixed decision threshold and changing a
+true positive into a false negative. The example is not used as a proof of
+semantic equivalence by itself; it is a concrete instance of the paired
+phenomenon quantified later by the full-test results and audit.
 
-\begin{lstlisting}[style=code,caption={Motivating example of a harmless source-level transformation. The variant changes layout and adds unreachable dead code, while the returned value is unchanged.},label={lst:motivating-example}]
-/* Original benchmark function */
-int read_first(char *buffer) {
-    return buffer[0];
+\begin{lstlisting}[style=code,caption={Motivating CodeXGLUE example in which a harmless identifier rename changes the public VulBERTa prediction.},label={lst:motivating-example}]
+/* Original: VulBERTa score = 0.781, predicted vulnerable */
+static int mov_read_strf(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+{
+    AVStream *st;
+    if (c->fc->nb_streams < 1)
+        return 0;
+    if (atom.size <= 40)
+        return 0;
+    st = c->fc->streams[c->fc->nb_streams - 1];
+    if ((uint64_t)atom.size > (1 << 30))
+        return AVERROR_INVALIDDATA;
+    av_free(st->codec->extradata);
+    st->codec->extradata =
+        av_mallocz(atom.size - 40 + FF_INPUT_BUFFER_PADDING_SIZE);
+    return 0;
 }
 
-/* Semantics-preserving variant:
-   formatting change + unreachable dead-code carrier */
-int read_first(char *buffer)
+/* Variant: c renamed to rvd_id0; score = 0.256, predicted safe */
+static int mov_read_strf(MOVContext *rvd_id0, AVIOContext *pb,
+                         MOVAtom atom)
 {
-    if (0) {
-        int rvd_dead_branch = 0;
-        (void)rvd_dead_branch;
-    }
-    return buffer[0];
+    AVStream *st;
+    if (rvd_id0->fc->nb_streams < 1)
+        return 0;
+    if (atom.size <= 40)
+        return 0;
+    st = rvd_id0->fc->streams[rvd_id0->fc->nb_streams - 1];
+    if ((uint64_t)atom.size > (1 << 30))
+        return AVERROR_INVALIDDATA;
+    av_free(st->codec->extradata);
+    st->codec->extradata =
+        av_mallocz(atom.size - 40 + FF_INPUT_BUFFER_PADDING_SIZE);
+    return 0;
 }
 \end{lstlisting}
 
-This article studies robustness under semantics-preserving code transformations
-as a verification and validation property of learning-based vulnerability
-detectors used in software systems workflows. Our
-goal is not to claim novelty for code transformations in general: adversarial
-and transformation-based evaluation of code models is now well established.
+This article treats robustness under semantics-preserving transformations as a
+metamorphic property of learning-based vulnerability detectors in software
+engineering workflows. Our goal is not to claim novelty for code
+transformations in general: adversarial and transformation-based evaluation of
+code models is now well established.
 Instead, the contribution boundary is narrower and specific to vulnerability
 detection. We adapt the metamorphic robustness perspective to function-level
 vulnerability labels, exact public vulnerability-detector checkpoints,
 imbalance-aware security metrics, harmful true-positive-to-false-negative
-flips, and a two-annotator semantic audit of transformed vulnerability
-benchmark snippets. The study treats transformations as paired tests: each
+flips, and a two-annotator semantic audit of transformed benchmark snippets.
+The study treats transformations as paired tests: each
 transformed variant remains linked to its original function, detector outputs
 are compared within each pair, and robustness is reported through flip rates,
 confidence intervals, paired tests, and label-specific analyses.
 
 We focus on low-compute evaluation that can be reproduced by researchers and
-tool builders without training new large models. The primary evidence uses
-full-test CodeXGLUE/Devign runs for exact public VulBERTa and LineVul
+tool builders without training new large models. The public CodeXGLUE evidence
+uses full-test runs for exact public VulBERTa and LineVul
 checkpoints~\cite{lu2021codexglue,zhou2019devign,hanif2022vulberta,fu2022linevul}
 and for the official ReGVD graph implementation~\cite{nguyen2022regvd},
-covering 2,732 original functions and 21,856 transformed variants. ReGVD is
+covering 2,732 original functions and 21,856 transformed variants. VulBERTa
+is the primary non-degenerate full-test detector signal; LineVul and ReGVD are
+reported as exact operating-point diagnostics. ReGVD is
 reported at both its upstream fixed threshold, where it collapses, and at a
 validation-selected threshold, where it becomes non-collapsed but weakly
 calibrated. A public GraphCodeBERT-Devign checkpoint is added on a stratified
@@ -225,10 +262,18 @@ distribution~\cite{fan2020bigvul,chen2023diversevul}. Because Big-Vul and
 DiverseVul are highly imbalanced, we report PR-AUC, MCC, and balanced accuracy
 in addition to F1 and avoid using their sampled local-baseline results as full
 detector rankings. Since we evaluate atomic transformations rather than
-composed edit sequences, the main flip rates should be interpreted as a lower
-bound on instability that may appear during realistic multi-edit maintenance.
+composed edit sequences, the main flip rates should be interpreted as
+single-edit evidence rather than as complete coverage of realistic multi-edit
+maintenance.
 Transformation validity is handled through syntax checks, deterministic
 pre-audit, and a completed two-annotator human annotation protocol.
+We additionally include a vulnerability-semantics-aware counterfactual probe on
+the available Big-Vul before/after fix pairs. Unlike label-preserving
+transformations, this probe expects a directional relation: the vulnerable
+pre-repair version should receive a higher risk score than the patched version.
+This separates two properties that are often conflated in robustness
+discussion: invariance to harmless source edits and sensitivity to
+vulnerability-removing fixes.
 
 LLM-based vulnerability detectors are outside the empirical scope of this
 study because their prompt formats, sampling controls, model versions, and
@@ -237,17 +282,27 @@ experimental design. We cite recent LLM-detector evasion work as related
 evidence, but the claims in this article are limited to public learning-based
 function-level detectors with reproducible inference paths.
 
-The study yields three main observations. First, exact public detectors can
-exhibit non-trivial prediction instability even when no retraining is involved:
-on the full transformed CodeXGLUE test set, VulBERTa shows a 7.01\% prediction
-flip rate and a clean-to-variant F1 drop from 0.577 to 0.555. Second,
+The study yields four main observations. First, the main non-degenerate
+full-test detector, VulBERTa, exhibits non-trivial prediction instability even
+when no retraining is involved: on the full transformed CodeXGLUE test set it
+shows a 7.01\% prediction flip rate, a clean-to-variant F1 drop from 0.577 to
+0.555, and 58.3 additional missed true-positive detections per 1,000
+vulnerable function-variant pairs. Second,
 robustness varies substantially by transformation family. Identifier renaming,
 safe dead-code carriers, comment insertion, and dead-branch insertion are more
-disruptive than layout-only changes and account for most harmful vulnerable-to-
-safe flips. Third, apparent stability must be interpreted together with
-predictive quality and calibration: public LineVul and fixed-threshold ReGVD
-look stable largely because their operating points are poor, while calibrated
-ReGVD provides structural coverage but weak balanced accuracy.
+disruptive than layout-only changes and account for most harmful
+vulnerable-to-safe flips. Third, apparent stability must be interpreted together with
+predictive quality and calibration. Single-threshold flip rates alone can hide
+large score-order movement: public LineVul has only 1.22\% decision flips but
+TIFR 9.76\% and Spearman score stability 0.736, while validation-calibrated
+ReGVD has 0.81\% decision flips but TIFR 7.23\%. This motivates reporting
+calibration-invariant score robustness alongside thresholded flips.
+Fourth, the exploratory patch-pair probe shows that robustness to
+label-preserving transformations is not the same as vulnerability-specific
+score ordering. On 101 Big-Vul before/after fix pairs, exact public VulBERTa,
+LineVul, and validation-calibrated ReGVD achieve only 30.7--45.5\% VDCP on
+original pairs and at most 4.0\% decision-pair success, motivating
+vulnerability-aware counterfactual evaluation as a distinct benchmark layer.
 
 We address the following research questions:
 
@@ -265,22 +320,17 @@ We address the following research questions:
 This article makes the following contributions:
 
 \begin{enumerate}
-  \item We define and instantiate a transformation-based verification and
-  validation protocol for learning-based vulnerability detection tools,
-  including formatting, comment, identifier-renaming, dead-code, control-flow,
-  and normalization transformations; validity screening; paired prediction
-  comparison; flip-rate confidence intervals; paired statistical tests; and
-  label-specific fragility analysis.
-  \item We execute exact public VulBERTa and LineVul checkpoints on the full
-  transformed CodeXGLUE test set and run the official ReGVD graph
-  implementation on the full transformed CodeXGLUE test set, making a clear distinction between public
-  checkpoint evidence and supporting local-family baselines.
-  \item We use Big-Vul and DiverseVul as external-validity probes (EVPs) for
-  transformation applicability and imbalance-aware metric behavior, while keeping CodeXGLUE as the primary
-  detector-specific empirical claim.
-  \item We evaluate simple test-time variant aggregation baselines and discuss
-  their limits as preliminary robustness engineering techniques for
-  learning-based vulnerability detection tools in code-review and CI settings.
+  \item We define a paired metamorphic-testing benchmark for vulnerability
+  detectors, covering transformations, validity screening, confidence
+  intervals, paired tests, and label-specific fragility analysis.
+  \item We provide full transformed CodeXGLUE evidence for VulBERTa, LineVul,
+  and ReGVD, with GraphCodeBERT, AST-structural, Big-Vul, DiverseVul, and
+  Juliet/SARD results kept as scoped supporting evidence.
+  \item We extend robustness reporting beyond fixed-threshold flip rates with
+  calibration-invariant score metrics and a VDCP patch-pair probe.
+  \item We evaluate lightweight aggregation and consistency-training probes,
+  clarifying where variant-based robustness engineering helps and where
+  calibration and predictive utility remain limiting factors.
 \end{enumerate}
 
 The remainder of this article is structured as follows. Section~2 reviews
@@ -288,7 +338,8 @@ learning-based vulnerability detection and robustness work for code models.
 Section~3 defines the study design, datasets, transformations, detector
 configurations, audit protocol, and metrics. Section~4 describes the
 implementation and reproducibility artifacts. Section~5 reports the empirical
-results for the four research questions. Section~6 discusses implications and
+results for the four research questions and the vulnerability counterfactual
+probe. Section~6 discusses implications and
 mechanisms of brittleness. Section~7 summarizes threats to validity, and
 Section~8 concludes the article.
 
@@ -338,6 +389,13 @@ preserves the semantics and vulnerability status of a function, the detector
 prediction should remain stable. This relation is useful because it allows
 robustness testing even when perfect behavioral equivalence proofs are
 impractical for arbitrary real-world code snippets.
+The broader machine-learning testing literature has proposed differential
+testing, coverage criteria, and metamorphic input generation for deep learning
+systems~\cite{pei2017deepxplore,tian2018deeptest,ma2018deepgauge,
+zhang2022mltesting}. We build on that testing perspective, but specialize the
+metamorphic relation, failure taxonomy, and metrics to software-vulnerability
+detectors whose false negatives and false positives have different operational
+costs in security workflows.
 
 However, transformation validity is a central concern. Some transformations
 that appear semantics-preserving in isolation may change behavior in specific
@@ -348,10 +406,10 @@ checks, and manual audits to reduce the risk of invalid variants.
 
 Robustness of neural code models has been studied well before the most recent
 large-model literature. Yefet et al. show that source-code models can be
-attacked with semantics-preserving perturbations~\cite{yefet2020adversarial};
-MHM uses Metropolis-Hastings identifier renaming to generate adversarial source
-examples~\cite{zhang2020mhm}; and Bielik and Vechev formulate adversarial
-robustness for code as a structured, discrete-input problem~\cite{bielik2020adversarial}.
+attacked with semantics-preserving perturbations~\cite{yefet2020adversarial}.
+MHM generates adversarial source examples with identifier
+renaming~\cite{zhang2020mhm}, and Bielik and Vechev formulate adversarial
+robustness for code as a structured discrete-input problem~\cite{bielik2020adversarial}.
 Rabin et al. and Henkel et al. evaluate generalization and semantic robustness
 under program transformations~\cite{rabin2021generalizability,henkel2022semantic}.
 ALERT emphasizes naturalness-aware attacks on pre-trained code models, while
@@ -368,10 +426,37 @@ labels rather than method names or generation outputs, report security-oriented
 failure modes such as true-positive-to-false-negative flips, run exact public
 vulnerability-detector checkpoints, handle imbalanced vulnerability corpora
 with PR-AUC/MCC/balanced accuracy, and validate transformed variants through a
-two-annotator semantic audit. Recent work also reports that LLM-based
+two-annotator semantic audit. Table~\ref{tab:related-positioning} makes this
+positioning explicit. Relative to Li et al.'s TSE study of transformer code
+intelligence under code transformation, CARROT, and ALERT, the scientific
+increment is the vulnerability-detection measurement layer: paired
+vulnerability-label preservation, harmful missed-vulnerability flips, exact
+public detector operating points, and audit-backed transformation validity for
+security benchmark snippets. Recent work also reports that LLM-based
 vulnerability detectors can be evaded by syntax- and compilation-preserving
-changes~\cite{sun2026syntax}; our study complements that line by focusing on
-low-compute, reproducible paired evaluation for public vulnerability detectors.
+changes~\cite{sun2026syntax}; our study cites it as related preprint evidence
+but does not rely on it for the main claims, which focus on low-compute,
+reproducible paired evaluation for public vulnerability detectors.
+
+\begin{table*}[t]
+  \centering
+  \caption{Positioning against closely related robustness work for code models.}
+  \label{tab:related-positioning}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llllll}
+    \toprule
+    Work & Main task & Transformation role & Detector evidence & Robustness metrics & Human validity audit \\
+    \midrule
+    MHM~\cite{zhang2020mhm} & Code classification & Adversarial identifier search & Surrogate task models & No & No \\
+    ALERT~\cite{yang2022alert} & Pre-trained code models & Naturalness-aware attacks & CodeBERT-style models & No & No \\
+    CARROT~\cite{zhang2022carrot} & Program-processing models & Robustness detection/enhancement & General code tasks & No & No \\
+    Li et al.~\cite{li2025robustness} & Transformer code intelligence & Code transformations & Code-intelligence transformers & No & No \\
+    Sun et al.~\cite{sun2026syntax} & LLM vulnerability detection & Evasion carriers & LLM detectors & Evasion-focused & Compilation/syntax checks \\
+    This article & Function-level vulnerability detection & Paired metamorphic testing & Public VD checkpoints & TP$\rightarrow$FN, CR, robust recall, TIFR, VDCP & Two annotators \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table*}
 
 We also distinguish this study from broader LLM-agent vulnerability work.
 Agentic systems can reproduce or exploit vulnerabilities when given rich
@@ -404,7 +489,7 @@ benchmark functions, generate transformed variants, validate transformation
 applicability, run vulnerability detectors on original and transformed
 functions, and compute robustness metrics.
 
-\begin{figure*}[t]
+\begin{figure*}
   \centering
   \resizebox{\textwidth}{!}{\input{figures/pipeline}}
   \caption{Overview of the transformation-based robustness evaluation pipeline.}
@@ -418,13 +503,15 @@ is CodeXGLUE/Devign because it is widely used, function-level, and feasible for
 low-compute experiments. We additionally normalize Big-Vul and DiverseVul
 samples as EVPs. These samples are used to check whether
 the transformation pipeline remains applicable beyond CodeXGLUE, to illustrate
-how robustness reporting behaves under strong class imbalance, and to compare
-qualitative fragility patterns. They are not used as primary evidence for
+how robustness reporting behaves under strong class imbalance, and to preserve
+limited external-validity context. They are not used as primary evidence for
 ranking detectors across datasets.
+Median token counts in Table~\ref{tab:datasets} use the VulBERTa and LineVul
+tokenizers used in the exact public runs.
 
 \begin{table*}[t]
   \centering
-  \caption{Prepared dataset statistics after normalization. Median token counts use the VulBERTa and LineVul tokenizers used in the exact public runs.}
+  \caption{Prepared dataset statistics after normalization.}
   \label{tab:datasets}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrrrrr}
@@ -441,10 +528,10 @@ ranking detectors across datasets.
   }
 \end{table*}
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \resizebox{\columnwidth}{!}{\input{figures/dataset_composition}}
-  \caption{Class composition of the normalized CodeXGLUE/Devign splits.}
+  \caption{Class composition of CodeXGLUE/Devign splits.}
   \label{fig:dataset-composition}
 \end{figure}
 
@@ -455,6 +542,11 @@ comment transformations, identifier transformations, control-flow rewrites,
 dead-code carrier transformations, and normalization/abstraction
 transformations. Table~\ref{tab:transformations} summarizes the expanded
 transformation set.
+Throughout the article, ``semantics-preserving'' is used as shorthand for
+``conservatively behavior-preserving under the stated source-level
+preconditions.'' For incomplete C/C++ benchmark snippets, this is an empirical
+construct supported by transformation preconditions, parse screening, audit,
+and limited compile anchoring rather than a formal proof of equivalence.
 
 \begin{table*}[t]
   \centering
@@ -478,10 +570,10 @@ transformation set.
   }
 \end{table*}
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \resizebox{\columnwidth}{!}{\input{figures/transformation_applicability}}
-  \caption{Transformation applicability on the CodeXGLUE/Devign validation and test splits.}
+  \caption{Transformation applicability on CodeXGLUE/Devign splits.}
   \label{fig:transformation-applicability}
 \end{figure}
 
@@ -532,11 +624,16 @@ fragments rather than standalone translation units.
 
 We select detectors according to three criteria: representation diversity,
 public availability, and feasibility under the compute budget. The primary
-full-test detector evidence comes from two exact public checkpoints:
-VulBERTa-MLP-Devign and LineVul. We evaluate them on the full transformed
-CodeXGLUE/Devign test set: 2,732 originals and all eight transformed variants
-per original, yielding 24,588 inference rows and 21,856 paired transformed
-variants per detector. To broaden the exact-checkpoint transformer evidence, we
+full-test detector evidence comes from exact public checkpoints or official
+implementation runs, but only VulBERTa yields a non-degenerate full-test
+robustness signal under its documented inference path. LineVul and ReGVD are
+therefore reported as exact public operating-point diagnostics; their
+prediction files are complete and reproducible, but their low flip rates are
+not interpreted as strong robustness. We evaluate VulBERTa
+and LineVul on the full transformed CodeXGLUE/Devign test set: 2,732 originals
+and all eight transformed variants per original, yielding 24,588 inference rows
+and 21,856 paired transformed variants per detector. To broaden the
+exact-checkpoint transformer evidence, we
 also execute a public GraphCodeBERT-Devign checkpoint on a stratified
 512-origin transformed CodeXGLUE subset. For structural coverage, we execute
 the official ReGVD graph implementation on the full transformed CodeXGLUE test
@@ -557,8 +654,8 @@ reporting outside the primary CodeXGLUE setting.
     \toprule
     Detector & Family & Role in study & Execution status \\
     \midrule
-    VulBERTa-MLP-Devign-public~\cite{hanif2022vulberta} & Public transformer checkpoint & Primary exact-checkpoint evidence & Full CodeXGLUE test \\
-    LineVul-public~\cite{fu2022linevul} & Public transformer checkpoint & Primary exact-checkpoint evidence & Full CodeXGLUE test \\
+    VulBERTa-MLP-Devign-public~\cite{hanif2022vulberta} & Public transformer checkpoint & Primary non-degenerate exact-checkpoint evidence & Full CodeXGLUE test \\
+    LineVul-public~\cite{fu2022linevul} & Public transformer checkpoint & Exact checkpoint, operating-point diagnostic & Full CodeXGLUE test \\
     GraphCodeBERT-Devign-public~\cite{guo2021graphcodebert} & Public transformer checkpoint & Exact-checkpoint transformer subset & 512-origin CodeXGLUE subset \\
     ReGVD-official~\cite{nguyen2022regvd} & Official GNN implementation & Public structural implementation evidence & Full CodeXGLUE test \\
     AST-structural-RF-local & Tree-sitter structural classifier & Working structural baseline & 512-origin CodeXGLUE subset \\
@@ -588,6 +685,13 @@ prediction differs from the original prediction:
 {\sum_i |T(x_i)|}.
 \end{equation}
 
+The denominator includes only successfully generated variants that pass the
+validation policy for a given detector input file. Skipped transformations are
+excluded from $\sum_i |T(x_i)|$ rather than counted as stable predictions. The
+same convention is used for transformation-specific flip rates, so rare
+transformations such as the restricted control-flow rewrite are interpreted
+only over their applicable variants.
+
 \paragraph{Robust accuracy.}
 Robust accuracy measures the fraction of clean-correct samples that remain
 correct under all transformed variants:
@@ -598,6 +702,11 @@ correct under all transformed variants:
 {\sum_i \mathbb{1}[\hat{y}(x_i)=y_i]}.
 \end{equation}
 
+For RobustAcc, the universal quantifier ranges over the applicable, validated
+variants generated for that original function. If a transformation is skipped
+because its preconditions are not met, it is absent from that function's
+variant set rather than treated as a passed robustness check.
+
 \paragraph{Complete resistance.}
 Complete resistance focuses on originally detected vulnerable functions:
 
@@ -606,6 +715,95 @@ Complete resistance focuses on originally detected vulnerable functions:
 \frac{\sum_{i:y_i=1} \mathbb{1}[\hat{y}(x_i)=1 \land \forall j,\hat{y}(T_j(x_i))=1]}
 {\sum_{i:y_i=1} \mathbb{1}[\hat{y}(x_i)=1]}.
 \end{equation}
+
+The same applicable-variant convention is used for CR. This keeps the metrics
+paired within each original but means that comparisons across transformation
+families should account for different applicability rates.
+
+\paragraph{Calibration-invariant score robustness.}
+Decision-flip rate is useful for deployment because tools ultimately make
+binary decisions, but a single threshold does not identify intrinsic score
+robustness. A detector can appear robust when its operating point predicts
+almost everything as safe or vulnerable, while its underlying score ordering
+still moves substantially under transformation. To separate threshold artifacts
+from score movement, we add calibration-invariant metrics based on the clean
+score ranking. Let $s(x)$ be the detector's vulnerable-class score, and let
+$F_D$ be the empirical cumulative distribution function of clean scores for a
+given detector and evaluation set. For each valid pair $(x_i,T_j(x_i))$, define
+the rank displacement
+\begin{equation}
+\Delta_F(x_i,T_j)=\left|F_D(s(T_j(x_i)))-F_D(s(x_i))\right|.
+\end{equation}
+The threshold-integrated flip rate (TIFR) is the mean rank displacement:
+\begin{equation}
+\text{TIFR}=\frac{1}{N}\sum_{i,j}\Delta_F(x_i,T_j).
+\end{equation}
+Equivalently, TIFR estimates the expected decision-flip probability when the
+operating threshold is drawn from the empirical clean-score distribution. We
+also report rank-displacement robustness,
+\begin{equation}
+\text{RankRobust}=1-\text{TIFR},
+\end{equation}
+and Spearman score stability between original and transformed scores. These
+rank-based quantities are invariant to monotone score reparameterizations and
+therefore complement, rather than replace, thresholded flip rates. They are
+especially useful for diagnosing detectors whose fixed public threshold or
+validation-calibrated threshold is near-degenerate.
+For tied clean scores, we assign the average empirical rank to all tied values.
+For transformed scores that do not appear exactly in the clean-score set, we
+use the right-continuous empirical CDF. Thus exact ties receive the same clean
+rank, while unseen variant scores are located by their empirical clean-score
+quantile.
+
+\paragraph{Identifiability of thresholded flips.}
+\textbf{Proposition 1.} For a fixed decision threshold $\tau$, the
+decision-flip rate
+$\Pr[\mathbb{1}\{s(x)\geq\tau\}\neq\mathbb{1}\{s(T(x))\geq\tau\}]$ is not an
+identifiable measure of intrinsic score robustness from thresholded decisions
+alone. In contrast, $\Delta_F$, TIFR, rank-displacement robustness, and
+Spearman score stability are invariant to strictly monotone score
+reparameterizations when the empirical clean-score CDF is transformed
+accordingly.
+
+\textit{Proof sketch.} A thresholded flip is observed only when the interval
+between $s(x)$ and $s(T(x))$ crosses $\tau$. The same score displacement can
+therefore yield a high or low decision-flip rate depending on whether $\tau$
+falls in a dense region of the clean-score distribution, near the moved
+examples, or in a degenerate region where almost all examples receive the same
+class. For example, with two clean scores $(0.20,0.80)$ and transformed scores
+$(0.80,0.20)$, the rank-displacement multiset is $\{0.5,0.5\}$ and both
+examples flip at $\tau=0.50$. With clean scores $(0.60,0.90)$ and transformed
+scores $(0.90,0.60)$, the rank-displacement multiset is again $\{0.5,0.5\}$,
+but neither example flips at the same threshold because all scores remain above
+$0.50$. Conversely, a detector that predicts nearly all examples as one class
+can have a low flip rate despite substantial score movement away from the
+threshold. Under a strictly increasing transformation $g$, the clean-score CDF
+satisfies $F_{g(D)}(g(s))=F_D(s)$ up to empirical tie handling, so rank
+displacements and rank correlations are preserved even though a fixed numeric
+threshold need not be.
+
+\paragraph{Counterfactual patch-pair ordering.}
+Label-preserving transformations test whether a detector is invariant to
+harmless source edits. They do not test whether the detector assigns higher
+risk to vulnerable code than to its patched counterpart. For Big-Vul
+before/after fix pairs, let $x_i^{v}$ denote the vulnerable pre-repair function
+and $x_i^{p}$ denote the patched function. We define the vulnerability
+dominance counterfactual pair metric as
+\begin{equation}
+\text{VDCP}=\frac{1}{M}\sum_i \mathbb{1}[s(x_i^{v})>s(x_i^{p})].
+\end{equation}
+Ties are counted as failures because equal scores do not rank the vulnerable
+function above the repair. This is a deliberately conservative choice for a
+security-ranking relation: a 0.5-credit tie convention would reward a detector
+that cannot distinguish the vulnerable function from its own repair, which is
+not useful for prioritization or gating. We therefore report the tie rate
+separately so degenerate detectors can be identified rather than hidden inside
+VDCP. We also report the mean score margin $s(x_i^{v})-s(x_i^{p})$ and a thresholded
+decision-pair success rate
+$\mathbb{1}[\hat{y}(x_i^{v})=1 \land \hat{y}(x_i^{p})=0]$. When both sides of a
+patch pair have matched transformed variants, the same transformation is
+applied to the vulnerable and patched functions and the resulting pair remains
+clustered by the original patch identifier in confidence intervals.
 
 We also report standard classification metrics, including accuracy, precision,
 recall, F1 score, balanced accuracy, Matthews correlation coefficient (MCC),
@@ -617,7 +815,14 @@ Because each original function is paired with transformed variants, we use
 paired analyses. We report bootstrap confidence intervals for performance
 drops and use paired tests such as McNemar's test when comparing paired
 prediction outcomes. We also report effect sizes to avoid relying only on
-statistical significance.
+statistical significance. Bootstrap intervals are clustered by original
+function: all variants derived from the same original are resampled together.
+The paired $p$ values are treated as confirmatory only for the pre-specified
+RQ-level comparisons and as descriptive for transformation-by-detector
+diagnostics. Where we report families of exact-public label-specific tests, we
+apply Benjamini--Hochberg false-discovery-rate control at $q=0.05$; the
+VulBERTa vulnerable-versus-non-vulnerable conclusion remains significant after
+correction. We do not base claims on isolated uncorrected tests.
 
 \section{Experimental Setup}
 
@@ -667,15 +872,23 @@ checkpoint runner's fixed threshold of 0.5. No line-score pooling, validation
 threshold tuning, or post-hoc recalibration is applied to the public LineVul
 row; its near-zero recall should therefore be interpreted as the behavior of
 this public function-level inference path, not as a claim about all possible
-LineVul calibrations. Both exact public runs use the same runner and the
+LineVul calibrations. Because the clean PR-AUC is below 0.5, we additionally
+checked the positive-class polarity by reversing the score ordering. Reversal
+lowers ROC-AUC from 0.530 to 0.470 and lowers PR-AUC from 0.492 to 0.436, so
+the anomaly is not explained by a simple positive-class-index inversion in the
+exported scores. It more likely reflects a mismatch between the public
+sequence-classification checkpoint interface used here and the original
+LineVul line-level evaluation/calibration recipe. We therefore downgrade
+LineVul from substantive robustness evidence to exact public operating-point
+evidence. Both exact public runs use the same runner and the
 prediction files are stored under \texttt{results/public\_exact}. Each exact
 public prediction file contains 24,588 rows, matching the full transformed
 CodeXGLUE test input: 2,732 originals and 21,856 transformed variants. An
 integrity check over \texttt{idx} and \texttt{variant\_id} found 24,588 unique
 keys and no duplicate predictions for either public detector.
 
-GraphCodeBERT-Devign-public is loaded from the third-party public Hugging Face checkpoint
-\emph{mahdin70/graphcodebert-devign-code-vulnerability-detector}, using the
+GraphCodeBERT-Devign-public is loaded from the third-party public Hugging Face
+checkpoint by \emph{mahdin70}, using the
 \texttt{microsoft/graphcodebert-base} tokenizer because the checkpoint
 repository does not include tokenizer files. Because this run is slower on the
 available CPU/MPS environment, we execute it on the stratified 512-origin
@@ -707,33 +920,40 @@ from simpler AST-shape structural behavior.
 
 We additionally execute four local detector-family baselines as supporting
 probes rather than primary detector evidence. CodeBERT-Devign-local uses a
-Devign-trained lexical sequence classifier. VulBERTa-local uses normalized-code
-character n-grams to emulate a RoBERTa-style code-normalized detector.
+Devign-trained lexical sequence classifier. VulBERTa-local uses normalized
+code character n-grams to emulate a RoBERTa-style code detector.
 LineVul-local uses the same lexical representation but pools risk at line
 level. ReGVD-structural-local uses structural counts with a random forest
-classifier. These baselines are trained on the CodeXGLUE/Devign training split,
-tune a fixed threshold on the validation split, and are evaluated without
-retraining on CodeXGLUE/Devign test, Big-Vul, and DiverseVul originals and
-transformed variants. Their Big-Vul and DiverseVul results are interpreted only
-as EVPs, transformation applicability checks,
-imbalance-aware metric demonstrations, and qualitative robustness-consistency
-checks.
+classifier. These baselines are trained on the CodeXGLUE training split, tuned
+on validation data, and evaluated without retraining on the CodeXGLUE test set,
+Big-Vul, and DiverseVul. Their Big-Vul and DiverseVul results are interpreted
+only as EVPs, applicability checks, and imbalance-aware metric demonstrations.
+We avoid using them as cross-dataset detector evidence because the sampled
+positive counts are small and the local operating points are weak under class
+imbalance.
 
 \subsection{Compute Budget}
 
 The transformation and metric computation steps run on CPU. Model inference is
 performed using existing checkpoints where possible. Training, if used, is
-limited to lightweight classifiers or small fine-tuning runs.
+limited to lightweight classifiers or small fine-tuning runs. To improve
+replayability, the artifact includes a pinned public-run requirements file for
+the Python, PyTorch, Transformers, safetensors, tokenizer, and tree-sitter
+dependencies used by the inference scripts. The execution manifest records
+each public checkpoint, input file, prediction file, and any checkpoint
+conversion needed by the local Transformers/PyTorch safety gate.
 
 \section{Results}
 
-This section reports completed dataset preparation, variant generation,
+This section reports dataset preparation, variant generation,
 deterministic semantic pre-audit, exact public checkpoint results, full-test
 ReGVD graph execution, human annotation, and supporting local-family results.
-The exact public and official public-implementation results are the primary detector evidence. The semantic-audit artifact
-reports the results of our completed two-annotator human annotation protocol over all 864 audit units,
-validating a randomly sampled subset with no invalid examples and a 95\% upper
-bound of 0.43\% on the invalid rate.
+VulBERTa is the main non-degenerate full-test detector signal; LineVul and
+ReGVD are reported as exact public operating-point diagnostics because their
+documented public thresholds or calibrated operating points are weak. The
+semantic-audit artifact reports the completed two-annotator human annotation
+protocol over all 864 audit units, validating a randomly sampled subset with no
+invalid examples and a 95\% upper bound of 0.43\% on the invalid rate.
 Across the result tables, boldface marks the key values that support the main
 claims in the surrounding text, such as the primary full-test flip rates,
 calibration-sensitive operating points, largest transformation effects,
@@ -788,8 +1008,8 @@ returning if/else pattern.
 \end{table*}
 
 Figure~\ref{fig:transformation-applicability} visualizes the original
-CodeXGLUE transformation pattern; the expanded table shows that applicability varies by
-dataset, especially for brace layout and identifier rewrites.
+CodeXGLUE transformation pattern; the expanded table shows that applicability
+varies by dataset, especially for brace layout and identifier rewrites.
 
 These results establish that the expanded robustness benchmark is ready for
 detector inference and paired robustness analysis.
@@ -802,16 +1022,17 @@ deterministic semantic pre-audit over changed variants from all three datasets.
 The pre-audit targets 40 changed samples per transformation and dataset; for
 the rare control-flow rewrite, all changed samples are included. The pre-audit
 contains 864 rows: 480 variants are marked preserved, and 384 variants are
-marked preserved under explicit transformation preconditions. A rigorous,
-two-annotator human annotation study over the 864 audit units was completed to validate the
-semantic preservation of the variants. The two human annotators achieved 98.7\%
+marked preserved under explicit transformation preconditions. We completed a
+rigorous two-annotator human annotation study over the 864 audit units to
+validate the semantic preservation of the variants. The two human annotators achieved 98.7\%
 raw agreement and Cohen's $\kappa=0.975$. Conservative consensus
 adjudication marked 469 variants as preserved, 384 as
 preserved under explicit preconditions, 11 as uncertain, and none as invalid.
 The 11 uncertain cases were excluded from all subsequent validity analyses,
-confirming that all analyzed variants are indeed semantics-preserving. The artifact includes the full
-two-annotator human audit protocol and completed annotation packet with independent human labels,
-disagreement flags, adjudication outcomes, and exclusion decisions.
+leaving no invalid examples among the analyzed variants. The artifact includes
+the full two-annotator human audit protocol and completed annotation packet
+with independent human labels, disagreement flags, adjudication outcomes, and
+exclusion decisions.
 
 The tree-sitter parse proxy is stable across transformation families. On
 CodeXGLUE, 81.95\% of original snippets parse without tree-sitter error nodes;
@@ -826,14 +1047,49 @@ normalization to 51.6\%; and the conservative control-flow rewrite to only
 support broad claims.
 
 The audit sample size is a pragmatic validity check rather than a proof of
-semantic equivalence. We targeted 40 changed samples per transformation and
-dataset cell because, under a binomial model, observing zero invalid examples
-in 40 samples gives an approximate 95\% upper bound of 7.2\% on the invalid
-rate for that cell; across the full 864-unit audit, zero invalid examples gives
-an approximate 95\% upper bound of 0.43\% for the audited sampling frame under
-the assumption that invalidity risk is homogeneous across audited cells. The 11
+semantic equivalence. Because invalidity risk is not necessarily homogeneous
+across transformations, Table~\ref{tab:audit-bounds} reports
+per-transformation rule-of-three bounds rather than relying only on the pooled
+864-unit bound. For transformations with 120 audited examples, observing zero
+invalid cases gives an approximate 95\% upper bound of 2.5\% for that
+transformation. The rare control-flow rewrite has only 24 audited examples
+because few functions satisfy its preconditions, so its per-transformation
+upper bound is 12.5\%. Across the full 864-unit audit, zero invalid examples
+still gives an approximate pooled 95\% upper bound of 0.43\%, but this pooled
+number is interpreted only under the stronger homogeneity assumption. The 11
 uncertain cases are conservatively excluded, so the reported detector metrics
 use only variants accepted by this validation policy.
+
+\begin{table*}[t]
+  \centering
+  \caption{Human-audit invalidity bounds and compile-anchor check.}
+  \label{tab:audit-bounds}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrr}
+    \toprule
+    Transformation & Audit $n$ & Invalid & 95\% upper bound & Both snippets compile \\
+    \midrule
+    Blank-line expansion & 120 & 0 & 2.5\% & 0/10 \\
+    Brace layout shift & 120 & 0 & 2.5\% & 0/10 \\
+    Code normalization/abstraction & 120 & 0 & 2.5\% & 0/10 \\
+    Comment insertion & 120 & 0 & 2.5\% & 0/10 \\
+    Control-flow rewrite & 24 & 0 & 12.5\% & 0/10 \\
+    Dead branch insertion & 120 & 0 & 2.5\% & 1/10 \\
+    Identifier renaming & 120 & 0 & 2.5\% & 0/10 \\
+    Safe dead-code carrier & 120 & 0 & 2.5\% & 0/10 \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table*}
+
+The compile-anchor check confirms why compilation cannot be the primary
+validity screen for these benchmark snippets: most audited functions are not
+standalone translation units because they depend on project-specific types,
+macros, headers, and build flags. On the small stratified anchor, only one
+original/variant pair compiled as a standalone snippet, and the transformed
+version compiled whenever its original did. We therefore treat compilation as
+a sanity anchor for the few standalone cases, not as a complete behavioral
+oracle.
 
 \subsection{RQ1: Overall Robustness}
 
@@ -865,6 +1121,15 @@ be read as strong robustness. The
 AST-structural local baseline remains a secondary structural comparator on the
 512-origin subset, with clean F1 0.669, variant F1 0.663, and a 1.98\% flip
 rate.
+As a non-learning robustness ceiling, we also run a deterministic
+comment-stripped risky-token scanner over the full transformed CodeXGLUE test
+set. It flags functions containing a small list of security-relevant C/C++
+tokens such as \texttt{strcpy}, \texttt{sprintf}, \texttt{memcpy},
+\texttt{malloc}, and \texttt{free}. This scanner has weak predictive utility
+(clean F1 0.162, recall 0.096, MCC 0.024), but it produces zero flips over all
+21,856 transformed pairs after comment and string stripping. The contrast is
+useful: deterministic static rules can be invariant by construction, but
+invariance alone is not sufficient for useful vulnerability detection.
 
 Table~\ref{tab:public-exact-slice} reports the exact public checkpoint,
 official ReGVD, and structural results. The VulBERTa, LineVul, and calibrated
@@ -879,13 +1144,16 @@ dead-code carriers trigger a small number of additional positive predictions,
 but PR-AUC still drops by 0.009 (95\% CI [-0.001, 0.019]); this again indicates
 that the public LineVul row is dominated by calibration and recall limitations.
 The clean LineVul PR-AUC of 0.492 is below 0.5 on the near-balanced CodeXGLUE
-test set, indicating that the public checkpoint's score ordering is slightly
-anti-correlated with vulnerability under this inference path and reinforcing
-the calibration interpretation.
+test set, but the clean ROC-AUC is 0.530 and reversing the score polarity makes
+both ROC-AUC and PR-AUC worse. This suggests that the problem is not a simple
+flipped positive-class index; rather, the public function-level inference path
+has very poor score separation and does not reproduce a useful LineVul
+operating point without additional calibration or the original line-level
+evaluation recipe.
 
 \begin{table*}[t]
   \centering
-  \caption{Primary public detector results on CodeXGLUE. VulBERTa, LineVul, and calibrated ReGVD use 2,732 originals and 21,856 transformed variants; rows marked $\dagger$ use 512 originals and 4,096 transformed variants.}
+  \caption{Public detector results on CodeXGLUE.}
   \label{tab:public-exact-slice}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrrrrrrrr}
@@ -898,6 +1166,43 @@ the calibration interpretation.
     GraphCodeBERT-Devign-public$\dagger$ & 0.513 & 0.629 & 0.293 & 0.722 & 0.262 & 0.511 & 0.720 & 0.265 & 0.044 & [0.038, 0.050] \\
     ReGVD-official, validation-calibrated & \textbf{0.631} & 0.507 & 0.053 & 0.505 & \textbf{0.981} & \textbf{0.632} & 0.504 & \textbf{0.975} & 0.008 & [0.007, 0.009] \\
     AST-structural-RF-local$\dagger$ & 0.669 & 0.535 & 0.118 & 0.595 & 0.902 & 0.663 & 0.585 & 0.908 & 0.020 & [0.016, 0.025] \\
+    Static risky-token scanner & 0.162 & 0.507 & 0.024 & $--$ & 0.089 & 0.162 & $--$ & 0.089 & \textbf{0.000} & [0.000, 0.000] \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table*}
+
+Table~\ref{tab:calibration-invariant} adds the calibration-invariant score
+robustness view motivated in Section~\ref{sec:metrics}. This table refines the
+interpretation of the low-flip operating-point rows. LineVul-public has only a
+1.22\% fixed-threshold decision-flip rate, but its TIFR is 9.76\%, its
+rank-displacement robustness is 90.24\%, and its Spearman score stability is
+only 0.736. Thus, the low LineVul flip rate is mainly a threshold artifact, not
+evidence that the score function is stable. ReGVD shows the same pattern in a
+weaker form: the validation-calibrated decision-flip rate is 0.81\%, but TIFR
+is 7.23\%. By contrast, GraphCodeBERT has a higher subset decision-flip rate
+than AST-structural-RF, but better rank robustness and score stability. This
+is the intended use of TIFR: it does not replace deployment-specific threshold
+analysis, but it prevents near-degenerate operating points from being mistaken
+for intrinsic robustness.
+TIFR is threshold-integrated flip rate over the empirical clean-score
+distribution; rank robustness is $1-\text{TIFR}$. Rows marked $\dagger$ use the
+512-origin subset.
+
+\begin{table*}[t]
+  \centering
+  \caption{Calibration-invariant score robustness.}
+  \label{tab:calibration-invariant}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Detector & Decision flip & TIFR & Rank robust. & Spearman $\rho$ & Mean $|$score shift$|$ \\
+    \midrule
+    VulBERTa-public & \textbf{0.070} & 0.050 & 0.950 & 0.928 & 0.059 \\
+    LineVul-public & 0.012 & \textbf{0.098} & \textbf{0.902} & \textbf{0.736} & 0.013 \\
+    ReGVD-official, validation-calibrated & 0.008 & \textbf{0.072} & \textbf{0.928} & 0.927 & 0.004 \\
+    GraphCodeBERT-public$\dagger$ & 0.044 & 0.032 & 0.968 & \textbf{0.976} & 0.020 \\
+    AST-structural-RF-local$\dagger$ & 0.020 & 0.038 & 0.962 & 0.943 & 0.014 \\
     \bottomrule
   \end{tabular}
   }
@@ -906,10 +1211,99 @@ the calibration interpretation.
 \begin{rqsummarybox}{Summary of RQ1}
 Semantics-preserving transformations cause measurable prediction instability,
 but flip rates alone are insufficient evidence of tool robustness. VulBERTa
-provides the clearest full-test signal, with a 7.01\% flip rate and a
-clean-to-variant F1 drop, whereas LineVul and ReGVD show that low flip rates
-can be artifacts of weak or near-degenerate operating points.
+provides the clearest full-test thresholded signal, with a 7.01\% flip rate, a
+clean-to-variant F1 drop, and 58.3 additional true-positive-to-false-negative
+flips per 1,000 vulnerable function-variant pairs. Calibration-invariant
+metrics reveal hidden score movement in LineVul and ReGVD, whose low decision
+flip rates coexist with TIFR values of 9.76\% and 7.23\%, respectively.
 \end{rqsummarybox}
+
+\subsection{Vulnerability Counterfactual Patch-Pair Probe}
+\label{sec:counterfactual-patch-probe}
+
+The preceding results evaluate a label-preserving metamorphic relation:
+predictions should remain stable when source code is rewritten without changing
+program behavior or vulnerability status. This section adds a complementary
+vulnerability-specific relation on Big-Vul and Juliet/SARD before/after pairs: the
+vulnerable pre-repair function should receive a higher vulnerable-class score than
+the patched function. We treat this as an exploratory probe for Big-Vul because
+it uses the 101 matched patch pairs available in the normalized sample. To add
+counterfactual power, we also extract 400 construction-guaranteed C-language
+bad/good function pairs across 47 CWEs from the Juliet/SARD C/C++ v1.3 test
+suite~\cite{sardJuliet2017}. We restrict this Juliet/SARD slice to C functions
+because the public VulBERTa tokenizer path crashed on several generated C++
+snippets through libclang. Unlike the earlier local-family diagnostic, this
+revision executes exact public VulBERTa and LineVul checkpoints and the
+validation-calibrated official ReGVD model on both patch-pair corpora. Its
+purpose is to show that harmless-edit invariance and vulnerability-fix ordering
+are different empirical properties.
+
+Table~\ref{tab:counterfactual-patch-probe} reports VDCP, score-margin, tie, and
+decision-pair results for the exact public detectors. The public checkpoints do
+not reliably rank vulnerable code above patched code. On original Big-Vul patch
+pairs, VDCP ranges from 30.7\% for validation-calibrated ReGVD to 45.5\% for
+LineVul; on the larger Juliet/SARD slice, VDCP ranges from 33.0\% for ReGVD to
+46.3\% for VulBERTa. No public detector clearly exceeds chance-level score
+ordering, and thresholded decision-pair success is at most 4.0\% on Big-Vul and
+3.7\% on Juliet/SARD. The matched transformed Big-Vul rows show similar
+behavior, with VDCP between 30.3\% and 45.5\% over 909 pair instances.
+These results explain why a robustness benchmark for vulnerability detectors
+should include both metamorphic invariance tests and vulnerability-aware
+counterfactual tests: a detector may preserve its prediction under harmless
+edits while still failing to order a vulnerable function above its repair.
+Because ties count as failures, the ReGVD row should be read together with its
+33.7--35.3\% tie rate; the metric is intentionally harsh on detectors that
+collapse many patch pairs to equal scores.
+In Table~\ref{tab:counterfactual-patch-probe}, Big-Vul Original uses 101 patch
+pairs and Big-Vul ALL uses the original plus eight matched transformed pair
+families (909 pair instances). Juliet/SARD uses 400 construction-guaranteed
+original C bad/good function pairs.
+In Figure~\ref{fig:vdcp-patch-pairs}, values below the dashed line fail to
+exceed chance-level vulnerable-before-patched ordering.
+
+\begin{table*}[t]
+  \centering
+  \caption{Exploratory counterfactual patch-pair ordering.}
+  \label{tab:counterfactual-patch-probe}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lllrrrrrr}
+    \toprule
+    Corpus & Detector & Scope & Pairs & VDCP & VDCP 95\% CI & Mean margin & Tie rate & Decision success \\
+    \midrule
+    Big-Vul & VulBERTa-public & Original & 101 & 0.396 & [0.297, 0.485] & -0.034 & 0.129 & 0.030 \\
+    Big-Vul & VulBERTa-public & ALL & 909 & 0.407 & [0.330, 0.483] & -0.032 & 0.129 & 0.036 \\
+    Big-Vul & LineVul-public & Original & 101 & 0.455 & [0.356, 0.554] & 0.014 & 0.168 & 0.040 \\
+    Big-Vul & LineVul-public & ALL & 909 & 0.455 & [0.378, 0.530] & -0.000 & 0.168 & \textbf{0.043} \\
+    Big-Vul & ReGVD-official, validation-calibrated & Original & 101 & 0.307 & [0.218, 0.396] & -0.001 & 0.337 & 0.000 \\
+    Big-Vul & ReGVD-official, validation-calibrated & ALL & 909 & 0.303 & [0.222, 0.382] & -0.002 & \textbf{0.353} & 0.000 \\
+    Juliet/SARD & VulBERTa-public & Original & 400 & \textbf{0.463} & \textbf{[0.412, 0.512]} & -0.051 & 0.000 & 0.037 \\
+    Juliet/SARD & LineVul-public & Original & 400 & 0.370 & [0.323, 0.420] & 0.000 & 0.000 & 0.000 \\
+    Juliet/SARD & ReGVD-official, validation-calibrated & Original & 400 & 0.330 & [0.285, 0.378] & -0.008 & 0.000 & 0.003 \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table*}
+
+\begin{figure}
+  \centering
+  \resizebox{\columnwidth}{!}{\input{figures/vdcp_patch_pairs}}
+  \caption{VDCP comparison on patch pairs.}
+  \label{fig:vdcp-patch-pairs}
+\end{figure}
+
+The 101 patch pairs cover 25 CWE labels, but only eight cells contain at least
+five pairs: unknown (19), CWE-119 (18), CWE-20 (10), CWE-125 (8), CWE-399 (7),
+CWE-264 (7), CWE-200 (5), and CWE-416 (5). We therefore treat the
+CWE-stratified values as descriptive diagnostics rather than inferential
+claims. Among these cells, public VulBERTa ranges from 12.5\% VDCP on CWE-125
+to 80.0\% on CWE-200, public LineVul ranges from 20.0\% on CWE-200/CWE-416 to
+100.0\% on CWE-399, and validation-calibrated ReGVD ranges from 12.5\% on
+CWE-125 to 60.0\% on CWE-416. These per-CWE values are unstable because the
+cells are small. The Juliet/SARD addition improves the counterfactual sample
+size and CWE spread, but it remains synthetic and construction-oriented rather
+than a replacement for real patch histories. The current result strengthens the
+benchmark design: vulnerability-detector robustness should evaluate both
+label-preserving invariance and vulnerability-removing counterfactual ordering.
 
 \subsection{Tokenization and Truncation Checks}
 
@@ -961,10 +1355,16 @@ vulnerable functions remain detected across all variants. Harmful flips
 LineVul, robust accuracy is high because the model almost always predicts the
 non-vulnerable class, but robust recall is only 0.3\%; this reinforces that low
 flip rates must be interpreted together with detection quality.
+GraphCodeBERT is omitted from Table~\ref{tab:exact-robust-taxonomy} because it
+is executed only on the 512-origin subset, and ReGVD is omitted because its
+validation-calibrated operating point is near-all-positive and not directly
+comparable for clean true-positive robustness. RobustAcc is computed over
+clean-correct originals; CR is computed over clean true-positive vulnerable
+originals.
 
 \begin{table*}[t]
   \centering
-  \caption{Robustness and flip taxonomy for the full exact public CodeXGLUE VulBERTa and LineVul runs. GraphCodeBERT is omitted because it is executed only on the 512-origin subset, and ReGVD is omitted because its validation-calibrated operating point is near-all-positive and not directly comparable for clean true-positive robustness. RobustAcc is computed over clean-correct originals; CR is computed over clean true-positive vulnerable originals.}
+  \caption{Exact-public robustness and flip taxonomy.}
   \label{tab:exact-robust-taxonomy}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrrrrr}
@@ -984,10 +1384,13 @@ largest source of harmful VulBERTa flips, dominated by
 $\text{TP}\rightarrow\text{FN}$ changes. For LineVul, most flips remain
 concentrated in dead-code carriers, but the absolute counts are small relative
 to the near-all-safe baseline.
+H-TPFN denotes true-positive to false-negative flips; H-TNFP denotes
+true-negative to false-positive flips. B-FNTP and B-FPTN are the corresponding
+beneficial flips.
 
 \begin{table*}[t]
   \centering
-  \caption{Per-transformation harmful and beneficial flips for exact public models on CodeXGLUE. H-TPFN is true-positive to false-negative; H-TNFP is true-negative to false-positive.}
+  \caption{Per-transformation harmful and beneficial flips.}
   \label{tab:public-flip-taxonomy-transform}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrrrr}
@@ -1011,9 +1414,12 @@ Table~\ref{tab:rq1} reports supporting local-family performance for all
 detector and dataset combinations. The CodeXGLUE rows provide secondary context
 beside the exact public checkpoint runs. The Big-Vul and DiverseVul rows are
 EVPs only: they test whether the transformation pipeline
-and qualitative fragility patterns persist under different, highly imbalanced
-dataset distributions, but they are not used to rank detectors or to claim full
-cross-dataset generalization.
+remains applicable under different, highly imbalanced dataset distributions
+and why imbalance-aware metrics are necessary, but they are not used to rank
+detectors or to claim full cross-dataset robustness generalization. These EVP
+and local-baseline rows are retained in the main text for transparency in this
+submission version; they can be moved to an online supplement without changing
+the primary CodeXGLUE or VDCP claims.
 
 \begin{table*}[t]
   \centering
@@ -1055,11 +1461,13 @@ Comment insertion also produces a large harmful component, with 16.1\% of
 vulnerable pairs changing from true positive to false negative. Dead-code
 carriers create both harmful and beneficial changes, suggesting that they shift
 the detector score rather than simply suppressing every positive prediction.
+Figure~\ref{fig:robustness-summary} summarizes clean F1, vulnerable variant
+recall, and prediction flip rate for the executed detector-family baselines.
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \resizebox{\columnwidth}{!}{\input{figures/robustness_summary}}
-  \caption{CodeXGLUE clean F1, vulnerable variant recall, and prediction flip rate for the executed detector-family baselines.}
+  \caption{CodeXGLUE robustness summary.}
   \label{fig:robustness-summary}
 \end{figure}
 
@@ -1071,7 +1479,8 @@ than relying on recall or F1 alone. In these EVPs, high
 recall should not be interpreted as strong detector quality: balanced accuracy
 remains close to 0.50, MCC is near zero for most detector-dataset pairs, and
 PR-AUC changes are small after transformation. The artifact also includes a
-full cross-dataset imbalance report as a CSV file.
+machine-readable copy of these rows, so the table can be shortened or moved to
+supplementary material if page budget is constrained.
 
 The external probes are intentionally modest. With only 101 vulnerable Big-Vul
 examples and 257 vulnerable DiverseVul examples in the sampled splits, they are
@@ -1136,22 +1545,38 @@ the primary exact-public VulBERTa and LineVul runs.
   }
 \end{table*}
 
-\begin{figure}[t]
+\begin{figure}
   \centering
   \resizebox{\columnwidth}{!}{\input{figures/transformation_sensitivity}}
-  \caption{Maximum observed prediction flip rate by transformation across datasets and executed detector-family baselines.}
+  \caption{Transformation-level prediction sensitivity.}
   \label{fig:transformation-sensitivity}
 \end{figure}
 
 The sensitivity ranking changes the interpretation of the study. Layout-only
 changes are generally weak perturbations, while added comments and unreachable
 code carriers expose detector reliance on superficial source tokens.
+The calibration-invariant view strengthens this diagnosis. For VulBERTa,
+identifier renaming has TIFR 10.77\% and Spearman score stability 0.848,
+followed by safe dead-code carriers (TIFR 9.59\%), dead branches (9.17\%), and
+comment insertion (8.89\%). For LineVul, the largest score-order movements are
+dead-code carriers (TIFR 32.34\%) and dead branches (31.13\%), even though the
+fixed threshold produces few vulnerable predictions. For validation-calibrated
+ReGVD, safe dead-code carriers (TIFR 20.04\%) and dead branches (19.25\%) are
+again the strongest perturbations. These values indicate that dead-code
+carriers move detector scores even when thresholded predictions are nearly
+constant.
+The restricted control-flow rewrite has only 0.3\% applicability on
+CodeXGLUE/Devign, so its near-zero effect should not be read as evidence that
+control-flow-preserving rewrites are generally harmless. It remains in the
+taxonomy as a conservative low-risk transformation, but broader rewrites such
+as dependency-checked statement reordering and idiom-preserving loop rewrites
+are better candidates for future versions of the benchmark.
 
 Because realistic maintenance edits often compose several small changes, we add
 a bounded 512-origin diagnostic probe over CodeXGLUE. The probe applies four
 two- or three-step compositions and three identifier-renaming ablations, then
-scores them with the executed local detector-family baselines. Table
-\ref{tab:composition-ablation} shows two useful patterns. First, composition
+scores them with the executed local detector-family baselines.
+Table~\ref{tab:composition-ablation} shows two useful patterns. First, composition
 does not eliminate fragility: the largest composition flip rate is 6.25\% for
 the VulBERTa-family local baseline under safe-dead-code plus return-expression
 normalization. Second, the fresh marker is not uniformly the most disruptive
@@ -1165,11 +1590,15 @@ Composition evidence for the exact public checkpoints is outside the current
 compute budget: the full-test VulBERTa, LineVul, and ReGVD claims in
 Table~\ref{tab:public-exact-slice} remain single-transformation claims, and the
 composition numbers below should be read only as illustrative diagnostics from
-local detector-family baselines.
+local detector-family baselines. We therefore treat atomic and composition rows
+as separate diagnostics and make no lower-bound claim for the public
+single-transformation results; composition may amplify, cancel, or leave
+unchanged the effect of individual edits depending on the detector and
+transformation order.
 
 \begin{table*}[t]
   \centering
-  \caption{Diagnostic composition and identifier-renaming ablation on a 512-origin CodeXGLUE subset using executed local detector-family baselines.}
+  \caption{Composition and identifier-renaming ablation diagnostics.}
   \label{tab:composition-ablation}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrrl}
@@ -1204,8 +1633,8 @@ solely by one unusual marker token.
 
 \subsection{RQ3: Label-Specific Fragility}
 
-\textbf{Answer to RQ3.} Label-specific instability depends strongly on detector
-operating point. For the exact public VulBERTa run, vulnerable transformed
+\textbf{Answer to RQ3.} Label-specific instability depends strongly on the
+detector operating point. For the exact public VulBERTa run, vulnerable transformed
 pairs flip more often than non-vulnerable pairs: 8.14\% versus 6.05\%
 (difference 2.09 percentage points; Fisher exact $p=2.1\times 10^{-9}$; odds
 ratio 1.38). For fixed-threshold LineVul the difference is smaller but still
@@ -1217,10 +1646,22 @@ rate and calibration. Supporting local-family baselines show the same general
 caution: their average vulnerable and non-vulnerable flip rates are small, but
 their operating points vary widely.
 
-This analysis distinguishes benign prediction instability from security-
-critical instability. In particular, true-positive-to-false-negative flips
-indicate cases where a detector originally identified a vulnerable function
-but missed a transformed equivalent.
+This analysis distinguishes benign prediction instability from
+security-critical instability. In particular, true-positive-to-false-negative
+flips indicate cases where a detector originally identified a vulnerable function
+but missed a transformed equivalent. For VulBERTa, this operationalizes to 585
+true-positive-to-false-negative changes across 10,040 vulnerable transformed
+pairs, or 58.3 additional missed detections per 1,000 vulnerable
+function-variant pairs. Conditional on functions that VulBERTa originally
+detected as vulnerable, the rate is higher: 109.0 missed detections per 1,000
+originally true-positive transformed pairs. These quantities make the 7.01\%
+overall flip rate more concrete: most predictions are stable, but the unstable
+subset is large enough to matter for CI or code-review gates that repeatedly
+scan equivalent revisions of vulnerable code.
+For the exact public rows in Table~\ref{tab:rq3-public-tests}, flip rates
+compare each transformed variant with its paired original prediction.
+Differences are vulnerable minus non-vulnerable, and $p$ values use Fisher's
+exact test over flip/no-flip counts.
 
 \begin{table*}[t]
   \centering
@@ -1242,7 +1683,7 @@ but missed a transformed equivalent.
 
 \begin{table*}[t]
   \centering
-  \caption{Label-specific flip-rate tests for exact public CodeXGLUE runs. Flip rates compare each transformed variant with its paired original prediction. Differences are vulnerable minus non-vulnerable; $p$ values use Fisher's exact test over flip/no-flip counts.}
+  \caption{Label-specific flip-rate tests.}
   \label{tab:rq3-public-tests}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{lrrrrrr}
@@ -1268,7 +1709,8 @@ flips should be reported alongside operating point diagnostics.
 
 \subsection{RQ4: Mitigation through Variant Aggregation}
 
-\textbf{Answer to RQ4.} Majority vote over original and transformed variants
+\textbf{Answer to RQ4.} The mitigation result is primarily negative. Majority
+vote over original and transformed variants
 does not materially change CodeXGLUE results because most variants agree with
 the original prediction. Max-risk aggregation increases recall for
 CodeBERT-Devign-local, VulBERTa-local, ReGVD-structural-local, and the exact
@@ -1276,7 +1718,11 @@ public checkpoints, but it also reduces precision. Calibrated probability and
 logit averaging can improve F1 for VulBERTa when the threshold is selected
 post-hoc on clean CodeXGLUE scores, while disagreement-based abstention improves
 precision and MCC at the cost of coverage and recall. These are still
-test-time augmentation diagnostics, not a mature mitigation strategy.
+test-time augmentation diagnostics, not deployable mitigation results. The
+study therefore identifies a mitigation gap rather than claiming a complete
+cure: a natural next step is transformation-consistency regularization or
+certified smoothing during fine-tuning, evaluated jointly on clean F1, TIFR, and
+VDCP.
 
 We evaluate original-only prediction, majority vote over the original plus
 variants, max-risk aggregation, probability averaging, calibrated logit
@@ -1284,10 +1730,13 @@ averaging, and abstention when variant predictions disagree. The max-risk rule
 predicts vulnerable if any variant is predicted vulnerable. The calibrated rows
 use clean-test score thresholds and are therefore diagnostic upper-bound
 operating points rather than deployable validation-set calibrations.
+Majority vote is identical to original-only prediction in
+Table~\ref{tab:rq4} because the original plus eight variant ballots have
+uniformly high agreement; the row is retained as a baseline check.
 
 \begin{table*}[t]
   \centering
-  \caption{Aggregation mitigation results on CodeXGLUE/Devign. Majority vote is identical to original-only prediction in these rows because the original plus eight variant ballots have uniformly high agreement; the row is retained as a baseline check.}
+  \caption{Aggregation mitigation results on CodeXGLUE/Devign.}
   \label{tab:rq4}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrr}
@@ -1311,7 +1760,7 @@ operating points rather than deployable validation-set calibrations.
   }
 \end{table*}
 
-Because the primary evidence comes from exact public checkpoints, we also
+Because the most important rows come from exact public checkpoints, we also
 evaluate aggregation for VulBERTa and LineVul directly. Max-risk aggregation
 raises VulBERTa recall from 0.535 to 0.645 and F1 from 0.577 to 0.615, at the
 cost of reducing precision from 0.627 to 0.588. Calibrated probability averaging
@@ -1322,9 +1771,48 @@ public LineVul, max-risk raises recall from 0.006 to 0.072 and F1 from 0.013 to
 0.126, but the fixed-threshold operating point remains too insensitive for a
 useful gate.
 
+We also run a small training-time cure probe to test whether
+transformation-consistency training can improve robustness rather than merely
+aggregate unstable predictions at test time. The probe keeps model capacity
+fixed: a hashed logistic detector is trained either on original CodeXGLUE
+training functions or on 6,000 stratified training origins plus their
+semantics-preserving variants with inherited labels. Table~\ref{tab:consistency-cure}
+shows that consistency training reduces CodeXGLUE TIFR from 1.37\% to 0.99\%
+with a small clean-F1 drop from 0.638 to 0.631. However, VDCP does not improve:
+Big-Vul VDCP changes from 0.376 to 0.366 and Juliet/SARD VDCP from 0.675 to
+0.558. We therefore treat transformation-consistency training as a partial cure
+for label-preserving score instability, not as a cure for vulnerability-fix
+ordering.
+Both rows in Table~\ref{tab:consistency-cure} use the same hashed logistic
+detector; the consistency row augments 6,000 CodeXGLUE training origins with
+semantics-preserving variants.
+
 \begin{table*}[t]
   \centering
-  \caption{Aggregation and selective-prediction diagnostics for exact public checkpoints on CodeXGLUE/Devign. Calibrated rows use post-hoc clean-test thresholds.}
+  \caption{Training-time transformation-consistency cure probe.}
+  \label{tab:consistency-cure}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrr}
+    \toprule
+    Training setting & Train rows & Clean F1 & CodeXGLUE TIFR & Big-Vul VDCP & Juliet/SARD VDCP & Interpretation \\
+    \midrule
+    Original only & 21,854 & \textbf{0.638} & 0.0137 & \textbf{0.376} & \textbf{0.675} & Baseline \\
+    Transformation-consistency & 42,053 & 0.631 & \textbf{0.0099} & 0.366 & 0.558 & Partial robustness cure \\
+    \bottomrule
+  \end{tabular}
+  }
+\end{table*}
+
+\begin{figure}
+  \centering
+  \resizebox{\columnwidth}{!}{\input{figures/consistency_cure}}
+  \caption{Transformation-consistency training probe.}
+  \label{fig:consistency-cure}
+\end{figure}
+
+\begin{table*}[t]
+  \centering
+  \caption{Exact-public aggregation and selective-prediction diagnostics.}
   \label{tab:public-aggregation}
   \resizebox{\textwidth}{!}{%
   \begin{tabular}{llrrrr}
@@ -1333,12 +1821,12 @@ useful gate.
     \midrule
     VulBERTa-public & Original fixed & 1.000 & 0.627 & 0.535 & 0.577 \\
     VulBERTa-public & Max-risk fixed & 1.000 & 0.588 & \textbf{0.645} & \textbf{0.615} \\
-    VulBERTa-public & Mean probability calibrated & 1.000 & 0.535 & \textbf{0.914} & \textbf{0.675} \\
-    VulBERTa-public & Mean logit calibrated & 1.000 & 0.535 & 0.908 & 0.674 \\
+    VulBERTa-public & Post-hoc mean probability & 1.000 & 0.535 & \textbf{0.914} & \textbf{0.675} \\
+    VulBERTa-public & Post-hoc mean logit & 1.000 & 0.535 & 0.908 & 0.674 \\
     VulBERTa-public & Abstain on disagreement & 0.694 & 0.670 & 0.449 & 0.538 \\
     LineVul-public & Original fixed & 1.000 & 0.615 & 0.006 & 0.013 \\
     LineVul-public & Max-risk fixed & 1.000 & 0.517 & \textbf{0.072} & \textbf{0.126} \\
-    LineVul-public & Mean probability calibrated & 1.000 & 0.460 & 0.999 & 0.630 \\
+    LineVul-public & Post-hoc mean probability & 1.000 & 0.460 & 0.999 & 0.630 \\
     LineVul-public & Abstain on disagreement & 0.939 & 0.667 & 0.003 & 0.007 \\
     \bottomrule
   \end{tabular}
@@ -1356,39 +1844,42 @@ recall produce flip rates of 14.3\%, 12.3\%, and 7.0\%, respectively. Thus,
 LineVul's robustness conclusions are highly threshold-dependent; the exact
 public row remains useful as a documented checkpoint behavior, but calibrated
 deployment would require a separate validation protocol.
+The thresholds in Table~\ref{tab:linevul-threshold} are diagnostic and are not
+used for the primary exact-public results.
 
-\begin{table*}[t]
+\begin{table}
   \centering
-  \caption{Post-hoc LineVul threshold sensitivity on CodeXGLUE clean test scores. These diagnostic thresholds are not used for the primary exact-public results.}
+  \caption{Post-hoc LineVul threshold sensitivity.}
   \label{tab:linevul-threshold}
-  \resizebox{\textwidth}{!}{%
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lrrrrr}
     \toprule
     Setting & Threshold & Clean recall & Clean F1 & Variant F1 & Flip \\
     \midrule
     Fixed public threshold & 0.500000 & 0.006 & 0.013 & 0.037 & 0.012 \\
-    Post-hoc clean-F1 threshold & \textbf{0.000012} & \textbf{0.998} & \textbf{0.630} & \textbf{0.630} & \textbf{0.002} \\
+    Post-hoc clean-F1 & \textbf{0.000012} & \textbf{0.998} & \textbf{0.630} & \textbf{0.630} & \textbf{0.002} \\
     Post-hoc recall 0.25 & 0.000043 & 0.250 & 0.331 & 0.410 & 0.143 \\
     Post-hoc recall 0.50 & 0.000019 & 0.501 & 0.491 & 0.526 & 0.123 \\
     Post-hoc recall 0.80 & 0.000014 & 0.799 & 0.589 & 0.600 & 0.070 \\
     \bottomrule
   \end{tabular}
   }
-\end{table*}
+\end{table}
 
-\begin{figure*}[t]
+\begin{figure}
   \centering
-  \input{figures/aggregation_tradeoff}
-  \caption{Precision--recall tradeoff of max-risk aggregation on CodeXGLUE/Devign.}
+  \resizebox{\columnwidth}{!}{\input{figures/aggregation_tradeoff}}
+  \caption{Precision--recall tradeoff under max-risk aggregation.}
   \label{fig:aggregation-tradeoff}
-\end{figure*}
+\end{figure}
 
 \begin{rqsummarybox}{Summary of RQ4}
-Variant aggregation is useful as a diagnostic but not yet a complete
-mitigation. Majority vote changes little, max-risk improves recall at a
-precision cost, calibrated averaging can improve VulBERTa's post-hoc F1, and
-abstention exposes disagreement, but deployable use would require
-validation-set calibration and explicit precision--recall operating policies.
+Variant aggregation is useful mainly as a diagnostic. Majority vote changes
+little, max-risk improves recall at a precision cost, post-hoc averaging shows
+the upper-bound value of score aggregation, and abstention exposes
+disagreement. None of these rows should be read as a deployable mitigation
+without validation-set calibration and explicit precision--recall operating
+policies.
 \end{rqsummarybox}
 
 \section{Discussion}
@@ -1399,6 +1890,35 @@ Clean benchmark metrics remain important, but they do not capture prediction
 stability. A detector can achieve strong clean F1 while failing to preserve
 predictions under harmless edits. Robustness metrics should therefore be
 reported alongside standard metrics for vulnerability detection.
+
+\subsection{Flip Rates Are Not Enough}
+
+The study also shows that a single decision-flip rate is not sufficient for
+comparing detector robustness across operating points. Thresholded flips are
+deployment-relevant, but they conflate score stability with threshold choice,
+class prior, and calibration. A near-all-safe or near-all-vulnerable detector
+can have a low flip rate while still moving examples substantially in score
+order. The calibration-invariant analysis addresses this gap by integrating
+over the empirical clean-score distribution and by reporting rank stability.
+This is why LineVul and validation-calibrated ReGVD are not described as more
+robust than VulBERTa despite their lower decision-flip rates: their
+thresholded decisions are stable partly because their operating points are
+weak, while TIFR exposes larger underlying score movement.
+
+\subsection{Two Complementary Metamorphic Relations}
+
+The results also distinguish two robustness relations that are easy to merge
+conceptually but different in practice. The first is label-preserving
+invariance: a detector should not change its answer when a function is renamed,
+formatted, commented, normalized, or conservatively rewritten without changing
+vulnerability status. The second is vulnerability counterfactual dominance: a
+detector should assign higher risk to a vulnerable pre-repair function than to its
+patched counterpart. The Big-Vul patch-pair probe shows that these are not
+substitutes. A detector can be stable under harmless edits yet still fail to
+rank a vulnerable function above its repair, or it can move scores under
+harmless edits while preserving some vulnerable-versus-patched ordering.
+Separating the two relations is therefore a novelty and measurement issue, not
+merely an additional experiment.
 
 \subsection{Implications}
 
@@ -1439,9 +1959,10 @@ insertion (184.3), dead-branch insertion (168.5), and code normalization
 with threshold-adjacent examples being more brittle. The token-length
 truncation proxy is not significant for VulBERTa (OR 1.04, $p=0.156$), but is
 significant for LineVul (OR 1.33, $p<10^{-12}$). These associations are not
-causal explanations of internal model behavior, but they localize brittleness
-toward transformation family and calibration margin more strongly than toward
-length alone.
+causal explanations of internal model behavior. They show that flip probability
+is statistically associated with transformation family and calibration margin
+more strongly than with length alone, but they do not identify the internal
+mechanism by which a detector changes its prediction.
 
 Our experiments identify where predictions change, but they do not fully
 explain why each model changes internally. We do not perform token-level
@@ -1462,13 +1983,32 @@ transformation rules, syntax checks, deterministic pre-audit, and a completed
 two-annotator human annotation protocol. The human audit identified no invalid
 cases but flagged 11 conservative uncertain cases; these were excluded from our
 analysis to ensure high-fidelity validity claims.
+The revised validity reporting also avoids relying only on a pooled invalidity
+bound: per-transformation bounds are 2.5\% for transformations with 120 audited
+examples and 12.5\% for the rare control-flow rewrite. A small compile-anchor
+check over stratified audit rows showed that almost no snippets compile as
+standalone translation units without project headers, types, and macros; the
+single original/variant pair that compiled did so on both sides. This confirms
+that compilation is useful as an anchor for the few standalone cases but cannot
+replace transformation preconditions, parse screening, and human audit for
+benchmark snippets.
+The audit validates the transformation relation, not the correctness of the
+underlying benchmark vulnerability labels. Vulnerability datasets can contain
+noisy labels, duplicate or near-duplicate functions, project-specific leakage,
+and incomplete CWE annotations. Because our main metrics are paired within each
+original function, label noise does not by itself create prediction flips, but
+it can affect whether a flip is classified as harmful, beneficial, or
+security-critical.
 
 \subsection{Internal Validity}
 
 Prediction changes may be caused by tokenization, truncation, preprocessing,
 or thresholding rather than model reasoning. We mitigate this threat by using
 fixed thresholds, logging token lengths, reporting truncation rates, and
-applying transformations only at evaluation time.
+applying transformations only at evaluation time. The calibration-invariant
+TIFR and rank-stability analysis further mitigates threshold confounding by
+separating score-order movement from a single binary operating point, although
+it still does not reveal the internal causal mechanism of a detector.
 
 \subsection{External Validity}
 
@@ -1484,17 +2024,27 @@ full cross-dataset detector rankings.
 The CodeXGLUE/Devign split used here does not provide sufficiently reliable
 fine-grained CWE labels for a primary per-CWE robustness analysis. Big-Vul and
 DiverseVul contain CWE metadata, but in this article they are sampled EVPs rather
-than exact-checkpoint evaluation datasets.
-Consequently, vulnerability-type-conditioned robustness remains an important
-extension rather than a central claim of this study.
+than full exact-checkpoint evaluation datasets. The counterfactual patch-pair
+probe uses the 101 matched Big-Vul before/after pairs available in the sample
+and reports exact-public CWE-stratified diagnostics only for cells with at least
+five pairs. Consequently, vulnerability-type-conditioned robustness remains a
+supporting diagnostic rather than a central claim of this study. The sparse
+CWE-conditioned exact-checkpoint rows are a limitation of the current artifact
+rather than evidence that all vulnerability classes are equally robust. A future
+extension should preserve CWE metadata through variant generation and compute
+per-CWE flip rates and patch-pair ordering only for vulnerability classes with
+enough positives to support meaningful intervals.
 
-Detector coverage is also limited. The strongest evidence uses full-test public
-VulBERTa and LineVul checkpoints, with the official ReGVD graph implementation
-added on the full transformed CodeXGLUE test set and GraphCodeBERT-Devign added
-on a meaningful 512-origin exact-checkpoint subset. ReGVD's non-collapsed row
-depends on validation-threshold calibration; at the upstream fixed 0.5
-threshold it collapses to all-safe predictions. The AST-structural-RF row is a
-working local structural baseline but not a public Devign/ReVeal checkpoint.
+Detector coverage is also limited. The strongest evidence uses full-test
+public VulBERTa and LineVul checkpoints, the official ReGVD graph
+implementation on the full transformed CodeXGLUE test set, and a
+GraphCodeBERT-Devign checkpoint on a 512-origin subset. ReGVD's non-collapsed
+row depends on validation-threshold calibration; at the upstream fixed 0.5
+threshold it collapses to all-safe predictions. The AST-structural-RF and
+AST-structural-ExtraTrees rows are working non-collapsed local structural
+baselines, not public Devign/ReVeal checkpoints. The ExtraTrees variant is
+evaluated on the full transformed CodeXGLUE test set with clean F1 0.636, flip
+rate 1.67\%, and TIFR 3.20\%.
 After discounting the degenerate LineVul fixed-threshold row, the clearest
 full-test exact-checkpoint robustness signal still comes from VulBERTa, while
 calibrated ReGVD provides public structural implementation coverage. Modern
@@ -1511,6 +2061,21 @@ model reacts to unreachable code, yet developers may more often introduce
 logging, feature-flagged, or preprocessor-guarded code. We therefore interpret
 dead-code results as stress tests for superficial token reliance rather than
 frequency estimates of ordinary maintenance edits.
+We also do not mine CodeXGLUE project histories to estimate how often each
+transformation appears in real commits. The motivation is grounded in prior
+refactoring and repository-mining studies, but the benchmark itself should be
+read as controlled robustness infrastructure rather than a frequency-weighted
+model of field edits.
+Similarly, the current identifier-renaming intervention uses one fresh marker
+style in the full public-checkpoint experiment. The 512-origin ablation shows
+that in-vocabulary and project-style names can also produce flips for local
+detector-family baselines, but it does not prove the same mechanism for the
+public checkpoints. Stronger future transformations should include
+dependency-checked statement reordering, idiom-preserving loop rewrites, and
+type-preserving expression refactors. A further extension is to scale the
+vulnerability-semantics-aware counterfactual patch-pair probe beyond the 101
+Big-Vul pairs used here, for example with Juliet/SARD, and report
+CWE-conditioned intervals only where the patch-pair count is sufficient.
 
 \subsection{Conclusion Validity}
 
@@ -1522,6 +2087,13 @@ the operating point a practitioner would choose after calibration. Alternative
 thresholds could improve recall and change flip-rate magnitudes, although the
 reported row remains the exact public checkpoint behavior under the documented
 runner.
+The central full-test robustness signal is also detector-limited. After
+discounting LineVul's weak function-level operating point and ReGVD's
+near-all-positive calibrated row, VulBERTa is the only full-test public
+checkpoint that yields an interpretable non-degenerate robustness signal. The
+article therefore supports a scoped claim about the evaluated public detectors
+and a reusable benchmark protocol, not a universal claim about all
+learning-based or AI-assisted vulnerability detectors.
 
 \section{Conclusion}
 
@@ -1531,36 +2103,49 @@ semantics-preserving code transformations. Clean F1, PR-AUC, balanced accuracy,
 and MCC remain important measures of predictive quality, yet they do not reveal
 whether a detector preserves its behavior when code is reformatted, renamed,
 commented, normalized, or rewritten in conservative behavior-preserving ways.
-For software systems use cases such as code review, continuous integration, and
+For software engineering use cases such as code review, continuous integration, and
 security regression testing, this stability is a first-order software-quality
 property.
 
-We presented a low-compute empirical protocol for transformation-based
-verification and validation of vulnerability detection tools. The protocol
-keeps each transformed variant paired with its original function, applies
-detector inference without retraining, and reports prediction flip rates,
-confidence intervals, paired tests, transformed performance, and label-specific
-fragility. The artifact includes transformed
-CodeXGLUE, Big-Vul, and DiverseVul samples; exact public VulBERTa and LineVul
-predictions on the full transformed CodeXGLUE test set; exact public
-GraphCodeBERT-Devign predictions on a 512-origin transformed subset; an
-official ReGVD graph run on the full transformed CodeXGLUE test set; a
-non-collapsed AST-structural baseline; supporting detector-family baselines; a 512-origin composition and
-identifier-ablation diagnostic; enhanced aggregation and flip-mechanism
-analyses; and audit materials for checking transformation validity.
+We presented a low-compute empirical benchmark for transformation-based
+metamorphic testing of vulnerability detection tools. The benchmark keeps each
+variant paired with its original function, applies detector inference without
+retraining, and reports prediction flip rates, confidence intervals, paired
+tests, transformed performance, and label-specific fragility. It also adds
+calibration-invariant score metrics, including threshold-integrated flip rate
+and rank-displacement robustness, to separate score movement from
+fixed-threshold artifacts. Finally, the benchmark includes an exploratory VDCP
+patch-pair probe that distinguishes stability under harmless edits from the
+ability to rank vulnerable pre-repair code above patched code. The artifact
+contains transformed dataset samples, public and supporting prediction files,
+composition and identifier-ablation diagnostics, aggregation and mechanism
+analyses, patch-pair results, a consistency-training probe, and audit materials.
 
-The results show that robustness cannot be inferred from clean benchmark
-performance alone. On the full transformed CodeXGLUE test set, exact public
-VulBERTa exhibits a measurable 7.01\% prediction flip rate and a clean-to-
-variant F1 drop from 0.577 to 0.555. Exact public LineVul has a lower flip rate
+The results provide a scoped warning against inferring deployment robustness
+from clean benchmark performance alone. On the full transformed CodeXGLUE test
+set, exact public VulBERTa exhibits a measurable 7.01\% prediction flip rate,
+a clean-to-variant F1 drop from 0.577 to 0.555, and 58.3 additional
+true-positive-to-false-negative changes per 1,000 vulnerable transformed
+pairs. Exact public LineVul has a lower flip rate
 of 1.22\%, but this apparent stability is limited by near-zero vulnerable
 recall. Official ReGVD also illustrates the importance of calibration: its
 fixed threshold collapses, whereas validation-threshold calibration produces a
 non-collapsed full-test structural row with a 0.81\% flip rate but weak
-balanced accuracy. Across
+balanced accuracy and a 7.23\% TIFR. LineVul similarly has only 1.22\%
+decision flips but 9.76\% TIFR, showing that low binary flip rates can mask
+substantial score-order instability. Across
 transformation families, identifier renaming, comment insertion, dead-branch
 insertion, and safe dead-code carriers are more disruptive than layout-only
 changes.
+The exploratory patch-pair probe adds a vulnerability-specific caution:
+exact public VulBERTa, LineVul, and validation-calibrated ReGVD achieve only
+30.7--45.5\% VDCP on original Big-Vul before/after fix pairs, and thresholded
+decision-pair success is at most 4.0\%. On 400 Juliet/SARD construction-guaranteed
+C bad/good pairs, the same public detectors reach only 33.0--46.3\% VDCP, with
+decision-pair success at most 3.7\%. Thus a detector's robustness claim should
+not rest only on whether it preserves predictions under harmless edits; it
+should also be tested against vulnerability-removing counterfactuals where
+suitable patch pairs are available.
 
 The practical implication is that robustness evaluation should become part of
 the standard reporting and quality-assurance package for vulnerability
@@ -1569,9 +2154,13 @@ superficial source features; benchmark designers can report transformed
 variants alongside clean test sets; and tool builders can use paired
 robustness tests as pre-deployment checks for learning-based security tools in
 code-review and CI pipelines. Simple aggregation over transformed variants is
-only a baseline; calibrated score averaging and selective abstention are more
-informative diagnostics, but practical deployment still requires validation-set
-calibration, better model design, training data, and semantic reasoning.
+not a complete mitigation: majority vote changes little, max-risk aggregation
+trades precision for recall, and post-hoc calibrated averaging is diagnostic
+rather than deployable. A low-compute transformation-consistency training probe
+reduces CodeXGLUE TIFR from 1.37\% to 0.99\% with a small clean-F1 drop, but it
+does not improve Big-Vul or Juliet/SARD VDCP. Practical deployment therefore
+still requires validation-set calibration, better model design, stronger
+training-time robustness objectives, and semantic reasoning.
 
 Overall, the strongest empirical claim is deliberately scoped to
 CodeXGLUE/Devign, where exact public checkpoints are evaluated on the full
@@ -1588,7 +2177,7 @@ sampled, supporting baselines.
 
 \section*{Acknowledgement}
 
-We acknowledge the support of time and facilities from Ho Chi Minh City
+We acknowledge the time and facilities support provided by Ho Chi Minh City
 University of Technology (HCMUT), VNU-HCM for this study.
 
 \section*{Data and Code Availability}
